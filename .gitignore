@@ -36,3 +36,5 @@ Thumbs.db
 _HQ/
 backend/err.log
 backend/out.log
+
+.vercel

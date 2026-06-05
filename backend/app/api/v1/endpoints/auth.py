@@ -1,3 +1,6 @@
+import uuid
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,8 +10,12 @@ from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_token
 from app.core.deps import get_current_user
 from app.models.user import User
+from app.models.workspace import Workspace, WorkspaceMember
+from app.models.subscription import Subscription
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+TRIAL_DAYS = 7
 
 
 class RegisterRequest(BaseModel):
@@ -39,6 +46,29 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
         display_name=req.display_name,
     )
     db.add(user)
+    await db.flush()
+
+    ws = Workspace(name=f"{req.display_name}", created_by=user.id)
+    db.add(ws)
+    await db.flush()
+
+    member = WorkspaceMember(workspace_id=ws.id, user_id=user.id, role="owner")
+    db.add(member)
+    await db.flush()
+
+    now = datetime.now(timezone.utc)
+    trial_end = now + timedelta(days=TRIAL_DAYS)
+    sub = Subscription(
+        workspace_id=ws.id,
+        provider="manual",
+        plan_code="monthly_40",
+        status="trial",
+        current_period_start=now,
+        current_period_end=trial_end,
+        trial_started_at=now,
+        trial_end=trial_end,
+    )
+    db.add(sub)
     await db.flush()
 
     return {"id": str(user.id), "email": user.email, "display_name": user.display_name}
