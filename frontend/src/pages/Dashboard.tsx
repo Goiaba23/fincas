@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { useDashboard } from "@/hooks/useDashboard";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -9,6 +10,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   AlertCircle,
+  Sparkles,
+  ChevronRight,
+  Zap,
 } from "lucide-react";
 import {
   AreaChart,
@@ -21,30 +25,64 @@ import {
   RadialBar,
 } from "recharts";
 
-const categoryColors: Record<string, string> = {
-  Moradia: "#0D47A1",
-  Alimentação: "#FF5A36",
-  Transporte: "#22C55E",
-  Lazer: "#8B5CF6",
-  Saúde: "#EC4899",
-  Educação: "#F59E0B",
-  Assinaturas: "#06B6D4",
-  Compras: "#64748B",
-};
-
 const COLORS = ["#0D47A1", "#FF5A36", "#22C55E", "#8B5CF6", "#EC4899", "#F59E0B", "#06B6D4", "#64748B"];
 
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-border/50 bg-card/90 px-4 py-3 shadow-xl backdrop-blur-xl">
-      <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className="rounded-2xl border border-[#E8E8ED] bg-white/90 px-4 py-3 shadow-xl backdrop-blur-xl"
+    >
+      <p className="mb-1 text-xs font-medium text-[#86868B]">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-sm font-bold" style={{ color: p.color }}>
           {p.name}: {formatCurrency(p.value)}
         </p>
       ))}
-    </div>
+    </motion.div>
+  );
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.06,
+      type: "spring" as const,
+      stiffness: 80,
+      damping: 18,
+      mass: 0.8,
+    },
+  }),
+};
+
+
+function AnimatedCard({ children, className, delay = 0, noHover = false }: { children: React.ReactNode; className?: string; delay?: number; noHover?: boolean }) {
+  return (
+    <motion.div
+      custom={delay}
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      {...(noHover ? {} : { whileHover: { y: -3, boxShadow: "0 20px 40px rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.04)", transition: { type: "spring" as const, stiffness: 300, damping: 20 } } })}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SkeletonCard({ className }: { className?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`rounded-3xl skeleton-shimmer ${className || ""}`}
+    />
   );
 }
 
@@ -53,341 +91,478 @@ export default function Dashboard() {
 
   if (isLoading || !data) {
     return (
-      <div className="animate-fade-in space-y-6">
-        <div className="mb-8 h-8 w-64 skeleton-shimmer rounded-lg" />
-        <div className="bento-grid">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-48 rounded-2xl skeleton-shimmer"
-              style={{ gridColumn: i < 2 ? "span 6" : i < 4 ? "span 4" : "span 6" }}
-            />
-          ))}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen pb-12">
+        <div className="mb-8">
+          <div className="mb-2 h-4 w-24 skeleton-shimmer rounded-lg" />
+          <div className="mb-1 h-9 w-64 skeleton-shimmer rounded-lg" />
+          <div className="h-5 w-48 skeleton-shimmer rounded-lg" />
         </div>
-      </div>
+        <div className="grid grid-cols-12 gap-5">
+          <SkeletonCard className="col-span-7 h-52" />
+          <SkeletonCard className="col-span-5 h-52" />
+          <SkeletonCard className="col-span-4 h-44" />
+          <SkeletonCard className="col-span-4 h-52" />
+          <SkeletonCard className="col-span-4 h-52" />
+          <SkeletonCard className="col-span-4 h-52" />
+          <SkeletonCard className="col-span-8 h-64" />
+          <SkeletonCard className="col-span-4 h-64" />
+        </div>
+      </motion.div>
     );
   }
 
   const { balance, monthly, category_breakdown, recent_transactions, goals, budget_progress, net_worth_history } = data;
 
-  const MonthlyMiniChart = () => {
-    const sparkData = data.balance_sparkline;
-    return (
-      <div className="h-20 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={sparkData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }}>
-            <defs>
-              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0D47A1" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#0D47A1" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="#0D47A1"
-              strokeWidth={2}
-              fill="url(#sparkGrad)"
-              dot={false}
-              activeDot={false}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
   const isPositive = monthly.net >= 0;
+  const savingsPct = monthly.savings_rate || 0;
 
   return (
-    <div className="animate-fade-in space-y-6">
-      <div className="mb-2">
-        <h1 className="text-2xl font-bold tracking-tight">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen pb-12">
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className="mb-8"
+      >
+        <p className="text-sm font-medium text-[#0D47A1]">Visão Geral</p>
+        <h1 className="text-3xl font-bold tracking-tight text-[#1A1A2E]">
           Painel Financeiro
         </h1>
-        <p className="text-sm text-muted-foreground">Visão geral das suas finanças este mês</p>
-      </div>
+        <p className="mt-1 text-sm text-[#86868B]">Seu resumo financeiro deste mês</p>
+      </motion.div>
 
-      <div className="bento-grid">
+      <div className="grid grid-cols-12 gap-5">
         {/* Hero Balance Card */}
-        <div className="animate-slide-up col-span-7" style={{ animationDelay: "0s" }}>
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0D47A1] to-[#1565C0] p-6 text-white">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/5" />
-            <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/5" />
+        <AnimatedCard delay={0} noHover className="col-span-7">
+          <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0D47A1] via-[#1565C0] to-[#1A237E] p-7 text-white">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
+              className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/[0.04]"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+              className="absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-white/[0.03]"
+            />
+            <div className="absolute right-6 top-6 rounded-full bg-white/10 px-3 py-1 text-[10px] font-medium text-white/70 backdrop-blur-sm">
+              Saldo Disponível
+            </div>
             <div className="relative">
-              <div className="mb-1 flex items-center gap-2 text-sm text-white/70">
-                <Wallet className="h-4 w-4" />
-                Saldo Disponível
+              <div className="mb-1 flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-white/60" />
               </div>
-              <div className="stat-value mb-1 text-white">{formatCurrency(balance)}</div>
-              <div className="mb-3 flex items-center gap-1.5 text-sm">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 80 }}
+                className="mb-1 text-4xl font-bold tracking-tight"
+              >
+                {formatCurrency(balance)}
+              </motion.div>
+              <div className="mb-5 flex items-center gap-2 text-sm">
                 {isPositive ? (
-                  <span className="flex items-center gap-0.5 text-emerald-300">
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                    {monthly.savings_rate}% de economia
-                  </span>
+                  <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.35 }}
+                    className="flex items-center gap-1 text-[#4CAF50]"
+                  >
+                    <ArrowUpRight className="h-4 w-4" />
+                    {savingsPct}% de economia
+                  </motion.span>
                 ) : (
-                  <span className="flex items-center gap-0.5 text-red-300">
-                    <ArrowDownRight className="h-3.5 w-3.5" />
+                  <span className="flex items-center gap-1 text-[#FF8A80]">
+                    <ArrowDownRight className="h-4 w-4" />
                     Gastando mais do que ganha
                   </span>
                 )}
-                <span className="text-white/50">• este mês</span>
+                <span className="text-white/40">• este mês</span>
               </div>
-              <MonthlyMiniChart />
+              <div className="h-16">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data.balance_sparkline} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                    <defs>
+                      <linearGradient id="heroSpark" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#64B5F6" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#64B5F6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#64B5F6"
+                      strokeWidth={2.5}
+                      fill="url(#heroSpark)"
+                      dot={false}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
-        </div>
+        </AnimatedCard>
 
         {/* Income / Expense / Savings Rate */}
-        <div className="animate-slide-up col-span-5" style={{ animationDelay: "0.1s" }}>
-          <div className="bento-card flex h-full flex-col justify-between">
+        <AnimatedCard delay={1} className="col-span-5">
+          <div className="flex h-full flex-col rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm transition-shadow">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
                 Receitas vs Despesas
               </h3>
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-500">
-                {monthly.savings_rate}% poupado
-              </span>
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="rounded-full bg-[#22C55E]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#22C55E]"
+              >
+                {savingsPct}% poupado
+              </motion.span>
             </div>
-            <div className="mt-4 flex items-center gap-6">
-              <div className="flex-1 space-y-4">
+            <div className="mt-5 flex items-center gap-5">
+              <div className="flex-1 space-y-5">
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <TrendingUp className="h-3 w-3 text-emerald-500" />
+                  <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-[#86868B]">
+                      <TrendingUp className="h-3.5 w-3.5 text-[#22C55E]" />
                       Receitas
                     </span>
-                    <span className="font-bold text-emerald-500">{formatCurrency(monthly.income)}</span>
+                    <span className="font-bold text-[#1A1A2E]">{formatCurrency(monthly.income)}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-1000"
-                      style={{ width: `${Math.min((monthly.income / (monthly.income || 1)) * 100, 100)}%` }}
+                  <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((monthly.income / (monthly.income || 1)) * 100, 100)}%` }}
+                      transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-full rounded-full bg-gradient-to-r from-[#22C55E] to-[#4ADE80]"
                     />
                   </div>
                 </div>
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1 text-muted-foreground">
-                      <TrendingDown className="h-3 w-3 text-rose-500" />
+                  <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-[#86868B]">
+                      <TrendingDown className="h-3.5 w-3.5 text-[#FF5A36]" />
                       Despesas
                     </span>
-                    <span className="font-bold text-rose-500">{formatCurrency(monthly.expense)}</span>
+                    <span className="font-bold text-[#1A1A2E]">{formatCurrency(monthly.expense)}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-rose-500 transition-all duration-1000"
-                      style={{ width: `${Math.min((monthly.expense / (monthly.income || 1)) * 100, 100)}%` }}
+                  <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((monthly.expense / (monthly.income || 1)) * 100, 100)}%` }}
+                      transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-full rounded-full bg-gradient-to-r from-[#FF5A36] to-[#FF8A65]"
                     />
                   </div>
                 </div>
               </div>
-              <div className="h-20 w-20 shrink-0">
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.5, type: "spring", stiffness: 60, damping: 12 }}
+                className="h-[88px] w-[88px] shrink-0"
+              >
                 <ResponsiveContainer width="100%" height="100%">
                   <RadialBarChart
                     cx="50%"
                     cy="50%"
                     innerRadius="70%"
                     outerRadius="100%"
-                    barSize={8}
-                    data={[{ name: "rate", value: monthly.savings_rate, fill: "#22C55E" }]}
+                    barSize={10}
+                    data={[{ name: "rate", value: savingsPct, fill: "#22C55E" }]}
                     startAngle={90}
                     endAngle={-270}
                   >
-                    <RadialBar background dataKey="value" cornerRadius={4} />
-                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill="var(--text-primary, #1A1A1A)" fontSize={12} fontWeight={700}>
-                      {monthly.savings_rate}%
+                    <RadialBar background={{ fill: "#F0F0F5" }} dataKey="value" cornerRadius={5} />
+                    <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" fill="#1A1A2E" fontSize={16} fontWeight={800}>
+                      {savingsPct}%
+                    </text>
+                    <text x="50%" y="62%" textAnchor="middle" dominantBaseline="middle" fill="#86868B" fontSize={8} fontWeight={500}>
+                      poupado
                     </text>
                   </RadialBarChart>
                 </ResponsiveContainer>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </AnimatedCard>
+
+        {/* Smart Savings Milestone */}
+        <AnimatedCard delay={2} noHover className="col-span-4">
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FF5A36] to-[#FF3D00] p-6 text-white shadow-sm"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4, type: "spring" }}
+              className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: "spring" }}
+              className="absolute -bottom-6 -left-6 h-20 w-20 rounded-full bg-white/8"
+            />
+            <div className="relative">
+              <div className="mb-3 flex items-center gap-2">
+                <motion.div
+                  initial={{ rotate: -20, scale: 0 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </motion.div>
+                <span className="text-[11px] font-medium uppercase tracking-wider text-white/70">
+                  Meta Inteligente
+                </span>
+              </div>
+              <p className="mb-1 text-2xl font-bold">R$ 2.400</p>
+              <p className="text-sm text-white/80">Faltam R$ 600 para atingir sua meta mensal de economia</p>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className="mt-4 flex cursor-pointer items-center gap-2 rounded-xl bg-white/15 px-3 py-2 transition-colors hover:bg-white/25"
+              >
+                <Zap className="h-3.5 w-3.5" />
+                <span className="text-xs font-medium">Aumente em 5% sua taxa de economia</span>
+                <ChevronRight className="ml-auto h-3.5 w-3.5 text-white/60" />
+              </motion.div>
+            </div>
+          </motion.div>
+        </AnimatedCard>
 
         {/* Category Breakdown */}
-        <div className="animate-slide-up col-span-4" style={{ animationDelay: "0.15s" }}>
-          <div className="bento-card h-full">
-            <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <AnimatedCard delay={3} className="col-span-4">
+          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+            <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
               Gastos por Categoria
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               {category_breakdown.length === 0 ? (
-                <p className="py-6 text-center text-xs text-muted-foreground">Nenhum gasto registrado este mês</p>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="py-6 text-center text-xs text-[#86868B]"
+                >
+                  Nenhum gasto registrado este mês
+                </motion.p>
               ) : (
-                category_breakdown.slice(0, 6).map((cat, i) => (
-                  <div key={cat.category}>
-                    <div className="mb-1 flex items-center justify-between text-xs">
+                category_breakdown.slice(0, 5).map((cat, i) => (
+                  <motion.div
+                    key={cat.category}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 80 }}
+                  >
+                    <div className="mb-1.5 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="h-2 w-2 rounded-full"
-                          style={{ backgroundColor: categoryColors[cat.group] || COLORS[i % COLORS.length] }}
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.4 + i * 0.06, type: "spring" }}
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: COLORS[i % COLORS.length] }}
                         />
-                        <span className="font-medium">{cat.category}</span>
+                        <span className="font-medium text-[#1A1A2E]">{cat.category}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold">{formatCurrency(cat.amount)}</span>
-                        <span className="text-muted-foreground">{cat.percentage}%</span>
+                        <span className="font-bold text-[#1A1A2E]">{formatCurrency(cat.amount)}</span>
+                        <span className="text-[#86868B]">{cat.percentage}%</span>
                       </div>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full transition-all duration-1000"
-                        style={{
-                          width: `${cat.percentage}%`,
-                          backgroundColor: categoryColors[cat.group] || COLORS[i % COLORS.length],
-                        }}
+                    <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${cat.percentage}%` }}
+                        transition={{ delay: 0.35 + i * 0.06, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: COLORS[i % COLORS.length] }}
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>
-            {category_breakdown.length > 6 && (
-              <p className="mt-3 text-center text-[10px] text-muted-foreground">
-                +{category_breakdown.length - 6} outras categorias
+            {category_breakdown.length > 5 && (
+              <p className="mt-4 text-center text-[11px] text-[#86868B]">
+                +{category_breakdown.length - 5} outras categorias
               </p>
             )}
           </div>
-        </div>
+        </AnimatedCard>
 
         {/* Recent Transactions */}
-        <div className="animate-slide-up col-span-4" style={{ animationDelay: "0.2s" }}>
-          <div className="bento-card h-full">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <AnimatedCard delay={4} className="col-span-4">
+          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
                 Transações Recentes
               </h3>
-              <a href="/transactions" className="text-[10px] font-medium text-[#0D47A1] hover:underline">
+              <motion.a
+                whileHover={{ x: 2 }}
+                href="/transactions"
+                className="text-[11px] font-medium text-[#0D47A1] hover:underline"
+              >
                 Ver todas
-              </a>
+              </motion.a>
             </div>
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {recent_transactions.length === 0 ? (
-                <p className="py-6 text-center text-xs text-muted-foreground">Nenhuma transação ainda</p>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="py-6 text-center text-xs text-[#86868B]"
+                >
+                  Nenhuma transação ainda
+                </motion.p>
               ) : (
-                recent_transactions.slice(0, 6).map((t) => (
-                  <div
+                recent_transactions.slice(0, 5).map((t, i) => (
+                  <motion.div
                     key={t.id}
-                    className="flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-accent/30"
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.05, type: "spring", stiffness: 80 }}
+                    whileHover={{ backgroundColor: "rgba(13,71,161,0.04)", x: 4 }}
+                    className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold ${
                           t.type === "deposit"
-                            ? "bg-emerald-500/10 text-emerald-500"
-                            : "bg-rose-500/10 text-rose-500"
+                            ? "bg-[#22C55E]/10 text-[#22C55E]"
+                            : "bg-[#FF5A36]/10 text-[#FF5A36]"
                         }`}
                       >
                         {t.type === "deposit" ? "↑" : "↓"}
-                      </div>
+                      </motion.div>
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-medium">{t.description || "Sem descrição"}</p>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="truncate text-sm font-medium text-[#1A1A2E]">{t.description || "Sem descrição"}</p>
+                        <p className="text-[11px] text-[#86868B]">
                           {t.category || "Sem categoria"}
                         </p>
                       </div>
                     </div>
                     <span
-                      className={`shrink-0 text-xs font-bold ${
-                        t.type === "deposit" ? "text-emerald-500" : "text-rose-500"
+                      className={`shrink-0 text-sm font-bold ${
+                        t.type === "deposit" ? "text-[#22C55E]" : "text-[#FF5A36]"
                       }`}
                     >
                       {t.type === "deposit" ? "+" : "-"}
                       {formatCurrency(t.amount)}
                     </span>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>
           </div>
-        </div>
+        </AnimatedCard>
 
         {/* Budget Progress */}
-        <div className="animate-slide-up col-span-4" style={{ animationDelay: "0.25s" }}>
-          <div className="bento-card h-full">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <AnimatedCard delay={5} className="col-span-4">
+          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
                 Orçamento do Mês
               </h3>
               {budget_progress.length > 0 && (
-                <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-500">
-                  {budget_progress.filter((b) => b.progress_pct > 80).length} perto do limite
-                </span>
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="rounded-full bg-[#FF5A36]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#FF5A36]"
+                >
+                  {budget_progress.filter((b) => b.progress_pct > 80).length} no limite
+                </motion.span>
               )}
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {budget_progress.length === 0 ? (
-                <div className="py-6 text-center">
-                  <Target className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-                  <p className="text-xs text-muted-foreground">Nenhum orçamento definido</p>
-                  <p className="mt-1 text-[10px] text-muted-foreground/60">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="py-6 text-center"
+                >
+                  <Target className="mx-auto mb-2 h-8 w-8 text-[#86868B]/50" />
+                  <p className="text-xs text-[#86868B]">Nenhum orçamento definido</p>
+                  <p className="mt-1 text-[11px] text-[#86868B]/60">
                     Crie orçamentos para acompanhar seus gastos
                   </p>
-                </div>
+                </motion.div>
               ) : (
-                budget_progress.slice(0, 5).map((b) => {
+                budget_progress.slice(0, 4).map((b, i) => {
                   const isOver = b.progress_pct > 100;
                   const isWarning = b.progress_pct > 80 && b.progress_pct <= 100;
                   return (
-                    <div key={b.category_id}>
-                      <div className="mb-1 flex items-center justify-between text-xs">
-                        <span className="font-medium">{b.category_name}</span>
+                    <motion.div
+                      key={b.category_id}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 80 }}
+                    >
+                      <div className="mb-1.5 flex items-center justify-between text-xs">
+                        <span className="font-medium text-[#1A1A2E]">{b.category_name}</span>
                         <div className="flex items-center gap-1.5">
-                          {isOver && <AlertCircle className="h-3 w-3 text-red-500" />}
-                          {isWarning && !isOver && (
-                            <span className="h-2 w-2 rounded-full bg-amber-500" />
-                          )}
-                          <span className={isOver ? "font-bold text-red-500" : "font-bold"}>
+                          {isOver && <AlertCircle className="h-3 w-3 text-[#FF5A36]" />}
+                          {isWarning && !isOver && <span className="h-2 w-2 rounded-full bg-[#FFB300]" />}
+                          <span className={isOver ? "font-bold text-[#FF5A36]" : "font-bold text-[#1A1A2E]"}>
                             {formatCurrency(b.spent)}
                           </span>
-                          <span className="text-muted-foreground">
-                            / {formatCurrency(b.budgeted)}
-                          </span>
+                          <span className="text-[#86868B]">/ {formatCurrency(b.budgeted)}</span>
                         </div>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                        <div
-                          className={`h-full rounded-full transition-all duration-1000 ${
-                            isOver ? "bg-red-500" : isWarning ? "bg-amber-500" : "bg-emerald-500"
+                      <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(b.progress_pct, 100)}%` }}
+                          transition={{ delay: 0.35 + i * 0.06, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          className={`h-full rounded-full ${
+                            isOver ? "bg-[#FF5A36]" : isWarning ? "bg-[#FFB300]" : "bg-[#22C55E]"
                           }`}
-                          style={{ width: `${Math.min(b.progress_pct, 100)}%` }}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })
               )}
             </div>
           </div>
-        </div>
+        </AnimatedCard>
 
         {/* Net Worth Chart */}
-        <div className="animate-slide-up col-span-7" style={{ animationDelay: "0.3s" }}>
-          <div className="bento-card h-full">
-            <h3 className="mb-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Evolução Patrimonial
-            </h3>
-            <p className="mb-4 text-[10px] text-muted-foreground">Últimos 6 meses</p>
-            <div className="h-52">
+        <AnimatedCard delay={6} className="col-span-8">
+          <div className="rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+            <div className="mb-1 flex items-center justify-between">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+                Evolução Patrimonial
+              </h3>
+              <span className="text-[11px] text-[#86868B]">Últimos 6 meses</span>
+            </div>
+            <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={net_worth_history} margin={{ top: 5, right: 5, bottom: 0, left: 0 }}>
                   <defs>
-                    <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#22C55E" stopOpacity={0.2} />
-                      <stop offset="100%" stopColor="#22C55E" stopOpacity={0} />
+                    <linearGradient id="incomeGrad2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#06B6D4" stopOpacity={0} />
                     </linearGradient>
-                    <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#EF4444" stopOpacity={0.2} />
-                      <stop offset="100%" stopColor="#EF4444" stopOpacity={0} />
+                    <linearGradient id="expenseGrad2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FF5A36" stopOpacity={0.2} />
+                      <stop offset="100%" stopColor="#FF5A36" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="month"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: "var(--text-secondary, #86868B)" }}
+                    tick={{ fontSize: 11, fill: "#86868B" }}
                     dy={8}
                   />
                   <YAxis hide />
@@ -396,79 +571,102 @@ export default function Dashboard() {
                     type="monotone"
                     dataKey="income"
                     name="Receitas"
-                    stroke="#22C55E"
-                    strokeWidth={2}
-                    fill="url(#incomeGrad)"
+                    stroke="#8B5CF6"
+                    strokeWidth={2.5}
+                    fill="url(#incomeGrad2)"
+                    dot={{ r: 3, fill: "#8B5CF6", stroke: "#fff", strokeWidth: 2 }}
+                    activeDot={{ r: 5, fill: "#8B5CF6", stroke: "#fff", strokeWidth: 2 }}
                   />
                   <Area
                     type="monotone"
                     dataKey="expense"
                     name="Despesas"
-                    stroke="#EF4444"
-                    strokeWidth={2}
-                    fill="url(#expenseGrad)"
+                    stroke="#FF5A36"
+                    strokeWidth={2.5}
+                    fill="url(#expenseGrad2)"
+                    dot={{ r: 3, fill: "#FF5A36", stroke: "#fff", strokeWidth: 2 }}
+                    activeDot={{ r: 5, fill: "#FF5A36", stroke: "#fff", strokeWidth: 2 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
+        </AnimatedCard>
 
         {/* Savings Goals */}
-        <div className="animate-slide-up col-span-5" style={{ animationDelay: "0.35s" }}>
-          <div className="bento-card h-full">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <AnimatedCard delay={7} className="col-span-4">
+          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+            <div className="mb-5 flex items-center justify-between">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
                 Metas de Economia
               </h3>
-              <a href="/fincas/micro-savings" className="text-[10px] font-medium text-[#0D47A1] hover:underline">
+              <motion.a
+                whileHover={{ x: 2 }}
+                href="/fincas/micro-savings"
+                className="text-[11px] font-medium text-[#0D47A1] hover:underline"
+              >
                 Gerenciar
-              </a>
+              </motion.a>
             </div>
             {goals.length === 0 ? (
-              <div className="py-6 text-center">
-                <PiggyBank className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-                <p className="text-xs text-muted-foreground">Nenhuma meta definida</p>
-                <p className="mt-1 text-[10px] text-muted-foreground/60">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="py-6 text-center"
+              >
+                <PiggyBank className="mx-auto mb-2 h-8 w-8 text-[#86868B]/50" />
+                <p className="text-xs text-[#86868B]">Nenhuma meta definida</p>
+                <p className="mt-1 text-[11px] text-[#86868B]/60">
                   Defina metas para acompanhar seu progresso
                 </p>
-              </div>
+              </motion.div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {goals.slice(0, 3).map((goal, i) => {
                   const isComplete = goal.is_completed || goal.progress_pct >= 100;
                   const gradClass = `method-gradient-${(i % 8) + 1}`;
                   return (
-                    <div key={goal.id}>
-                      <div className="mb-1.5 flex items-center justify-between text-xs">
+                    <motion.div
+                      key={goal.id}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.08, type: "spring", stiffness: 80 }}
+                    >
+                      <div className="mb-1.5 flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
-                          <div className={`flex h-6 w-6 items-center justify-center rounded-md ${gradClass} text-[10px] text-white`}>
+                          <motion.div
+                            whileHover={{ scale: 1.1, rotate: 5 }}
+                            className={`flex h-7 w-7 items-center justify-center rounded-xl ${gradClass} text-[11px] text-white`}
+                          >
                             {isComplete ? "✓" : "₿"}
-                          </div>
-                          <span className="font-medium">{goal.name}</span>
+                          </motion.div>
+                          <span className="text-sm font-medium text-[#1A1A2E]">{goal.name}</span>
                         </div>
                         <div className="text-right">
-                          <span className="font-bold">{formatCurrency(goal.current_amount)}</span>
-                          <span className="text-muted-foreground"> / {formatCurrency(goal.target_amount)}</span>
+                          <span className="font-bold text-[#1A1A2E]">{formatCurrency(goal.current_amount)}</span>
+                          <span className="text-[#86868B]"> / {formatCurrency(goal.target_amount)}</span>
                         </div>
                       </div>
-                      <div className="relative h-2 overflow-hidden rounded-full bg-muted">
-                        <div
-                          className={`h-full rounded-full transition-all duration-1000 ${gradClass}`}
-                          style={{ width: `${Math.min(goal.progress_pct, 100)}%` }}
+                      <div className="relative h-2.5 overflow-hidden rounded-full bg-[#F0F0F5]">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(goal.progress_pct, 100)}%` }}
+                          transition={{ delay: 0.35 + i * 0.08, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                          className={`h-full rounded-full ${gradClass}`}
                         />
                       </div>
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                      <p className="mt-1 text-[11px] text-[#86868B]">
                         {isComplete ? "Concluída! 🎉" : `${goal.progress_pct}% concluída`}
                       </p>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
             )}
           </div>
-        </div>
+        </AnimatedCard>
       </div>
-    </div>
+    </motion.div>
   );
 }

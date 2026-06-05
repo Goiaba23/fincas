@@ -1,4 +1,5 @@
 from uuid import UUID
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -9,6 +10,7 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.models.user import User
 from app.models.rule import RuleGroup, Rule, RuleTrigger, RuleAction
+from app.services.rule_engine import execute_rules, test_rule_on_transaction
 
 router = APIRouter(prefix="/rules", tags=["rules"])
 
@@ -38,7 +40,14 @@ class ActionCreate(BaseModel):
     value: str | None = None
 
 
-# --- Rule Groups ---
+class TestRuleInput(BaseModel):
+    description: str = ""
+    amount: float = 0
+    transaction_type: str = "withdrawal"
+    date: date | None = None
+    category_id: str | None = None
+    payee_id: str | None = None
+
 
 @router.get("/groups")
 async def list_rule_groups(
@@ -49,15 +58,18 @@ async def list_rule_groups(
         select(RuleGroup).where(RuleGroup.is_active == True).order_by(RuleGroup.sort_order)
     )
     groups = result.scalars().all()
-    return [
-        {
+    result_data = []
+    for g in groups:
+        count_result = await db.execute(
+            select(Rule).where(Rule.group_id == g.id, Rule.is_active == True)
+        )
+        result_data.append({
             "id": str(g.id),
             "name": g.name,
             "description": g.description,
-            "rule_count": 0,
-        }
-        for g in groups
-    ]
+            "rule_count": len(count_result.scalars().all()),
+        })
+    return result_data
 
 
 @router.post("/groups", status_code=201)
@@ -68,10 +80,9 @@ async def create_rule_group(
 ):
     group = RuleGroup(name=req.name, description=req.description)
     db.add(group)
+    await db.flush()
     return {"id": str(group.id), "name": group.name}
 
-
-# --- Rules ---
 
 @router.get("/")
 async def list_rules(
@@ -107,6 +118,7 @@ async def create_rule(
         stop_processing=req.stop_processing,
     )
     db.add(rule)
+    await db.flush()
     return {"id": str(rule.id), "name": rule.name}
 
 
@@ -122,25 +134,28 @@ async def get_rule(
         raise HTTPException(404)
 
     triggers = await db.execute(
-        select(RuleTrigger).where(RuleTrigger.rule_id == rule_id)
+        select(RuleTrigger).where(RuleTrigger.rule_id == rule_id).order_by(RuleTrigger.sort_order)
     )
     actions = await db.execute(
-        select(RuleAction).where(RuleAction.rule_id == rule_id)
+        select(RuleAction).where(RuleAction.rule_id == rule_id).order_by(RuleAction.sort_order)
     )
 
     return {
         "id": str(rule.id),
         "name": rule.name,
+        "group_id": str(rule.group_id),
+        "description": rule.description,
+        "stop_processing": rule.stop_processing,
         "triggers": [
-            {"type": t.trigger_type, "value": t.value} for t in triggers.scalars()
+            {"id": str(t.id), "type": t.trigger_type, "value": t.value, "is_negated": t.is_negated}
+            for t in triggers.scalars()
         ],
         "actions": [
-            {"type": a.action_type, "value": a.value} for a in actions.scalars()
+            {"id": str(a.id), "type": a.action_type, "value": a.value}
+            for a in actions.scalars()
         ],
     }
 
-
-# --- Triggers ---
 
 @router.post("/triggers", status_code=201)
 async def add_trigger(
@@ -155,10 +170,9 @@ async def add_trigger(
         is_negated=req.is_negated,
     )
     db.add(trigger)
+    await db.flush()
     return {"id": str(trigger.id), "type": trigger.trigger_type, "value": trigger.value}
 
-
-# --- Actions ---
 
 @router.post("/actions", status_code=201)
 async def add_action(
@@ -172,4 +186,18 @@ async def add_action(
         value=req.value,
     )
     db.add(action)
+    await db.flush()
     return {"id": str(action.id), "type": action.action_type, "value": action.value}
+
+
+@router.post("/{rule_id}/test")
+async def test_rule(
+    rule_id: UUID,
+    test_data: TestRuleInput,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    txn_dict = test_data.model_dump()
+    txn_dict["date"] = txn_dict["date"] or date.today()
+    result = await test_rule_on_transaction(db, rule_id, txn_dict)
+    return result

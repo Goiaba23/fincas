@@ -7,7 +7,7 @@ from app.models.transaction import TransactionJournal, Transaction
 from app.models.category import CategoryGroup, Category
 from app.models.payee import Payee
 from app.models.tag import Tag
-from app.models.budget import Budget, BudgetLimit
+from app.models.budget import Budget, BudgetLimit, EnvelopeAssignment
 from app.models.rule import RuleGroup, Rule, RuleTrigger, RuleAction
 from app.models.recurring import RecurringTransaction, Bill
 from app.models.goal import Goal

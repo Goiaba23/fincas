@@ -5,6 +5,10 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Transactions from "./pages/Transactions";
+import Budgets from "./pages/Budgets";
+import Goals from "./pages/Goals";
+import Settings from "./pages/Settings";
+import Assistant from "./pages/Assistant";
 import FincasHub from "./pages/FincasHub";
 import FincasKakeibo from "./pages/FincasKakeibo";
 import FincasMicroSavings from "./pages/FincasMicroSavings";
@@ -69,6 +73,38 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Transactions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/budgets"
+          element={
+            <ProtectedRoute>
+              <Budgets />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/goals"
+          element={
+            <ProtectedRoute>
+              <Goals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assistant"
+          element={
+            <ProtectedRoute>
+              <Assistant />
             </ProtectedRoute>
           }
         />
