@@ -1,0 +1,38 @@
+# Environment
+.env
+.env.local
+.env.production
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Project specific
+.firecrawl/
+_HQ/
+backend/err.log
+backend/out.log

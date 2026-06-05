@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alertas Animados</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 700px; height: 300px;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Montserrat', sans-serif;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+}
+
+canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.alert-box {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 30px 50px;
+  background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(10,10,10,0.4) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.alert-box.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.alert-box.hide {
+  opacity: 0;
+  transform: translateY(-40px) scale(0.9);
+  transition: all 0.5s ease;
+}
+
+/* Linhas decorativas animadas */
+.alert-box::before, .alert-box::after {
+  content: '';
+  position: absolute;
+  width: 40px; height: 1px;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.6s ease 0.3s;
+  transform: scaleX(0);
+}
+.alert-box.show::before, .alert-box.show::after {
+  transform: scaleX(1);
+}
+.alert-box::before { top: -1px; left: 0; }
+.alert-box::after { bottom: -1px; right: 0; }
+
+.alert-type {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 6px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+}
+.alert-box.show .alert-type { opacity: 1; }
+
+.alert-name {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  text-shadow: 0 0 60px rgba(255,255,255,0.05);
+}
+.alert-name .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.alert-box.show .alert-name .char {
+  animation: charFade 0.4s ease forwards;
+}
+
+@keyframes charFade {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-message {
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 2px;
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.8s;
+}
+.alert-box.show .alert-message { opacity: 1; }
+
+/* Glitch scan line (efeito Darkmode) */
+.glitch-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,255,255,0.08);
+  pointer-events: none;
+  opacity: 0;
+}
+.alert-box.show .glitch-line {
+  animation: glitchScan 0.5s ease 0.3s forwards;
+}
+@keyframes glitchScan {
+  0% { top: 10%; opacity: 0; transform: scaleX(0); }
+  30% { opacity: 1; transform: scaleX(1); }
+  100% { top: 90%; opacity: 0; transform: scaleX(0); }
+}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="alert-box" id="alertBox">
+  <div class="glitch-line"></div>
+  <div class="alert-type" id="alertType">NOVO SEGUIDOR</div>
+  <div class="alert-name" id="alertName"></div>
+  <div class="alert-message" id="alertMessage">Obrigado pelo follow!</div>
+</div>
+
+<script>
+// Canvas de efeitos (partículas, raios, pixels)
+const canvas = document.getElementById('fx');
+const ctx = canvas.getContext('2d');
+canvas.width = 700; canvas.height = 300;
+
+const particles = [];
+
+class FXParticle {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.type = type || 'spark';
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 6 + 2;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.life = 0;
+    this.maxLife = Math.random() * 30 + 20;
+    this.size = Math.random() * 4 + 1;
+    this.color = Math.random() > 0.5 ? '#ffffff' : 'rgba(255,255,255,0.6)';
+    this.gravity = 0.05;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += this.gravity;
+    this.vx *= 0.98;
+    this.life++;
+  }
+  draw() {
+    const alpha = 1 - (this.life / this.maxLife);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = this.color;
+    if (this.type === 'spark') {
+      ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+    } else if (this.type === 'ring') {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * (1 + this.life * 0.1), 0, Math.PI * 2);
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+  get dead() { return this.life >= this.maxLife; }
+}
+
+function explode(x, y, count = 40) {
+  for (let i = 0; i < count; i++) {
+    particles.push(new FXParticle(x, y, Math.random() > 0.7 ? 'ring' : 'spark'));
+  }
+}
+
+function animateFX() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    particles[i].draw();
+    if (particles[i].dead) particles.splice(i, 1);
+  }
+  if (particles.length > 0) {
+    requestAnimationFrame(animateFX);
+  }
+}
+
+// Sistema de alerta
+let timeoutId = null;
+
+function showAlert({ type, name, message, duration = 6000 }) {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    document.getElementById('alertBox').classList.remove('show', 'hide');
+  }
+
+  const typeMap = {
+    follower: { label: 'NOVO SEGUIDOR' },
+    sub: { label: 'NOVO INSCRITO' },
+    donation: { label: 'DOACAO' },
+    host: { label: 'HOST' },
+    raid: { label: 'RAID' },
+    pix: { label: 'LIVE PIX' }
+  };
+  const info = typeMap[type] || typeMap.follower;
+
+  document.getElementById('alertType').textContent = info.label;
+  document.getElementById('alertMessage').textContent = message;
+
+  // Animação por caractere no nome
+  const nameEl = document.getElementById('alertName');
+  nameEl.innerHTML = '';
+  for (let i = 0; i < name.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = name[i] === ' ' ? '\u00A0' : name[i];
+    span.style.animationDelay = (0.3 + i * 0.04) + 's';
+    nameEl.appendChild(span);
+  }
+
+  const box = document.getElementById('alertBox');
+  box.classList.remove('hide');
+  box.classList.add('show');
+
+  // Explosão de partículas
+  setTimeout(() => {
+    explode(350, 150, 50);
+    requestAnimationFrame(animateFX);
+  }, 400);
+
+  // Explosão secundária
+  setTimeout(() => {
+    explode(200, 80, 20);
+    explode(500, 200, 20);
+  }, 700);
+
+  timeoutId = setTimeout(() => {
+    box.classList.remove('show');
+    box.classList.add('hide');
+  }, duration);
+}
+
+// Testes automáticos
+const testAlerts = [
+  { type: 'follower', name: 'PlayerExemplo', message: 'Obrigado pelo follow!' },
+  { type: 'sub', name: 'SubscriberVIP', message: 'Inscrito nivel 1!' },
+  { type: 'donation', name: 'DoadorTop', message: 'R$ 25,00 - Valeu!' },
+  { type: 'pix', name: 'PixAnimado', message: 'R$ 10,00 - Live pix!' },
+];
+
+let idx = 0;
+setTimeout(function showNext() {
+  if (idx < testAlerts.length) {
+    showAlert(testAlerts[idx % testAlerts.length]);
+    idx++;
+    setTimeout(showNext, 7000);
+  }
+}, 1000);
+</script>
+</body>
+</html>

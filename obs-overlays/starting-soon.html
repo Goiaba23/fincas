@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starting Soon</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px;
+  background: #000000;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Montserrat', sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #ffffff;
+}
+
+/* Linhas animadas de fundo */
+.bg-lines {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-lines span {
+  position: absolute;
+  width: 1px; height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  animation: lineMove 8s linear infinite;
+}
+.bg-lines span:nth-child(1) { left: 10%; animation-delay: 0s; }
+.bg-lines span:nth-child(2) { left: 30%; animation-delay: 2s; }
+.bg-lines span:nth-child(3) { left: 50%; animation-delay: 4s; }
+.bg-lines span:nth-child(4) { left: 70%; animation-delay: 6s; }
+.bg-lines span:nth-child(5) { left: 90%; animation-delay: 1s; }
+
+@keyframes lineMove {
+  0% { transform: translateY(100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
+/* Círculo pulsante */
+.pulse-ring {
+  position: absolute;
+  width: 600px; height: 600px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 50%;
+  animation: pulseExpand 4s ease-in-out infinite;
+}
+.pulse-ring:nth-child(7) { animation-delay: 0s; }
+.pulse-ring:nth-child(8) { animation-delay: 1.3s; }
+.pulse-ring:nth-child(9) { animation-delay: 2.6s; }
+
+@keyframes pulseExpand {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { opacity: 0.3; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Conteúdo central */
+.content {
+  text-align: center;
+  z-index: 10;
+}
+.logo-text {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 12px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 30px;
+  animation: fadeIn 2s ease;
+}
+.main-title {
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  animation: slideUp 1.5s ease;
+}
+.main-title strong {
+  font-weight: 700;
+}
+.subtitle {
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 60px;
+  animation: slideUp 1.8s ease;
+}
+
+/* Timer */
+.timer-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  animation: fadeIn 2.5s ease;
+}
+.timer-item {
+  text-align: center;
+}
+.timer-number {
+  font-size: 56px;
+  font-weight: 200;
+  color: #ffffff;
+  line-height: 1;
+  min-width: 80px;
+}
+.timer-label {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-top: 8px;
+}
+.timer-separator {
+  font-size: 42px;
+  font-weight: 200;
+  color: rgba(255,255,255,0.3);
+  padding-top: 8px;
+}
+
+/* Barra inferior */
+.bottom-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #ffffff 50%, transparent 100%);
+  animation: barScan 3s ease-in-out infinite;
+}
+@keyframes barScan {
+  0% { transform: scaleX(0.3); opacity: 0.3; }
+  50% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0.3); opacity: 0.3; }
+}
+
+.social-links {
+  position: absolute;
+  bottom: 40px;
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 10;
+  animation: fadeIn 3s ease;
+}
+.social-links span {
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.3);
+  margin: 0 20px;
+}
+.social-links span i {
+  font-style: normal;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div class="bg-lines">
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="pulse-ring" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="pulse-ring" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+<div class="pulse-ring" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+<div class="bottom-bar"></div>
+
+<div class="content">
+  <div class="logo-text">Live Stream</div>
+  <div class="main-title"><strong>INICIANDO</strong> EM BREVE</div>
+  <div class="subtitle">Prepare-se para a gameplay</div>
+  <div class="timer-container">
+    <div class="timer-item">
+      <div class="timer-number" id="minutes">05</div>
+      <div class="timer-label">Minutos</div>
+    </div>
+    <div class="timer-separator">:</div>
+    <div class="timer-item">
+      <div class="timer-number" id="seconds">00</div>
+      <div class="timer-label">Segundos</div>
+    </div>
+  </div>
+</div>
+
+<div class="social-links">
+  <span>🔴 <i>TWITCH.TV/SEU CANAL</i></span>
+  <span>📺 <i>YOUTUBE</i></span>
+  <span>💬 <i>DISCORD.GG/SEU</i></span>
+</div>
+
+<script>
+let totalSeconds = 300;
+function updateTimer() {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+  document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+  if (totalSeconds > 0) totalSeconds--;
+}
+updateTimer();
+setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>

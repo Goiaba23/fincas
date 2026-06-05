@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Box</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 420px; height: 600px;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Montserrat', sans-serif;
+  background: transparent;
+  padding: 10px;
+}
+
+/* Canal do chat */
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 12px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 8px;
+}
+.chat-header .dot {
+  width: 5px; height: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+.chat-header .title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+/* Mensagens */
+#messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: calc(100% - 35px);
+  overflow: hidden;
+}
+
+.msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-left: 2px solid rgba(255,255,255,0.2);
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: msgIn 0.5s ease forwards;
+}
+
+@keyframes msgIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.msg-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: rgba(255,255,255,0.1);
+  padding: 1px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.msg-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-username {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  display: inline;
+}
+
+.msg-text {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.4;
+  word-wrap: break-word;
+  display: inline;
+  margin-left: 4px;
+}
+
+.msg-badge.vip { background: rgba(200, 120, 255, 0.25); color: #c878ff; }
+.msg-badge.mod { background: rgba(0, 200, 50, 0.25); color: #00c832; }
+.msg-badge.sub { background: rgba(255, 0, 100, 0.2); color: #ff4499; }
+.msg-badge.broadcaster { background: rgba(255, 200, 0, 0.25); color: #ffcc00; }
+
+/* Scroll invisível */
+#messages {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+</style>
+</head>
+<body>
+<div class="chat-header">
+  <div class="dot"></div>
+  <div class="title">Chat da Live</div>
+</div>
+<div id="messages"></div>
+
+<script>
+const messages = [
+  { user: 'JoaoGamer', text: 'eai cara ta massa o jogo!', badge: '' },
+  { user: 'MariaStream', text: 'primeira vez aqui, que jogo é esse?', badge: '' },
+  { user: 'VIP_Daniel', text: 'sempre acompanho, forte abraço', badge: 'vip' },
+  { user: 'Mod_Lucas', text: 'galera respeita o chat', badge: 'mod' },
+  { user: 'StreamerAmigo', text: 'vai arrasar hoje!', badge: '' },
+  { user: 'Sub_Rafael', text: 'inscrito aqui, tmj!', badge: 'sub' },
+  { user: 'GamerGirl_99', text: 'esse jogo é muito bom', badge: '' },
+  { user: 'PedroStream', text: 'GG cara, jogando muito', badge: '' },
+];
+
+const container = document.getElementById('messages');
+let index = 0;
+
+function addMessage() {
+  const msg = messages[index % messages.length];
+  index++;
+
+  const div = document.createElement('div');
+  div.className = 'msg';
+
+  const badgeHtml = msg.badge ? `<span class="msg-badge ${msg.badge}">${msg.badge}</span>` : '';
+
+  div.innerHTML = `
+    ${badgeHtml}
+    <div class="msg-content">
+      <span class="msg-username">${msg.user}</span>
+      <span class="msg-text">${msg.text}</span>
+    </div>
+  `;
+
+  container.appendChild(div);
+
+  // Remove oldest if more than 25
+  while (container.children.length > 25) {
+    container.removeChild(container.firstChild);
+  }
+}
+
+// Add initial batch
+for (let i = 0; i < 5; i++) {
+  addMessage();
+}
+
+// Add one every 4 seconds
+setInterval(addMessage, 4000);
+</script>
+</body>
+</html>

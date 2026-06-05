@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fincas — UI Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#09090b;--card:#18181b;--card2:#27272a;--border:#27272a;
+--text:#fafafa;--text2:#a1a1aa;--text3:#71717a;
+--green:#22c55e;--green-d:#15803d;--green-l:#dcfce7;
+--red:#ef4444;--rose:#f43f5e;--amber:#f59e0b;--orange:#f97316;
+--blue:#3b82f6;--cyan:#06b6d4;--violet:#8b5cf6;--purple:#a855f7;
+--emerald:#10b981;--teal:#14b8a6;--pink:#ec4899;--slate:#64748b;
+--radius:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.screen{width:100%;max-width:1440px;margin:0 auto;padding:40px 24px}
+.screen-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--green);margin-bottom:8px}
+.screen-label{font-size:20px;font-weight:800;margin-bottom:24px;color:var(--text)}
+.divider{height:1px;background:var(--border);margin:32px 0}
+
+/* ===== LOGIN ===== */
+.login{display:flex;min-height:100vh;background:var(--bg)}
+.login-left{flex:1;background:linear-gradient(135deg,#0a1a0a 0%,#0f0f0f 50%,#1a0a0a 100%);display:flex;align-items:center;justify-content:center;padding:48px}
+.login-left .content{text-align:center;max-width:400px}
+.login-left .flags{font-size:48px;margin-bottom:24px;letter-spacing:12px}
+.login-left h1{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--green),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.login-left p{color:var(--text2);font-size:14px}
+.login-right{flex:1;display:flex;align-items:center;justify-content:center;padding:48px}
+.login-card{width:100%;max-width:400px}
+.login-card .logo{font-size:28px;font-weight:800;color:var(--green);margin-bottom:32px}
+.login-card h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.login-card .sub{color:var(--text2);font-size:13px;margin-bottom:32px}
+.login-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--card);border-radius:8px;padding:3px}
+.login-tabs button{flex:1;padding:10px;border:none;background:transparent;color:var(--text2);font-weight:600;font-size:13px;border-radius:6px;cursor:pointer;transition:.2s}
+.login-tabs button.active{background:var(--green);color:#fff}
+.input{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px;outline:none;transition:.2s}
+.input:focus{border-color:var(--green)}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:.2s}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-d)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.login-footer{text-align:center;margin-top:16px;color:var(--text3);font-size:12px}
+
+/* ===== SIDEBAR MOCKUP ===== */
+.app{display:flex;min-height:100vh}
+.sidebar{width:256px;background:var(--card);border-right:1px solid var(--border);padding:16px;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar .logo{font-size:20px;font-weight:800;color:var(--green);padding:8px 12px;margin-bottom:24px}
+.sidebar nav{flex:1;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.nav-item:hover{background:var(--card2);color:var(--text)}
+.nav-item.active{background:var(--green);color:#fff;font-weight:600}
+.nav-item .icon{width:20px;text-align:center;font-size:16px}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text3);padding:16px 12px 8px}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:16px}
+.sidebar-footer .user{font-size:13px;color:var(--text2);padding:0 12px;margin-bottom:8px}
+.main{flex:1;overflow-y:auto;padding:32px;background:var(--bg)}
+
+/* ===== TRIAL BANNER ===== */
+.trial-banner{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-radius:10px;margin-bottom:24px;font-size:13px}
+.trial-active{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+.trial-active .t-icon{color:var(--green)}
+.trial-expired{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+.trial-expired .t-icon{color:var(--red)}
+.trial-banner .t-text{flex:1;margin:0 12px}
+.trial-banner .t-btn{padding:6px 14px;border-radius:6px;border:none;font-size:12px;font-weight:600;cursor:pointer}
+.trial-banner .t-btn-green{background:var(--green);color:#fff}
+.trial-banner .t-btn-red{background:var(--red);color:#fff}
+
+/* ===== STATS CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:16px}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.stat-icon.blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.stat-icon.green{background:rgba(34,197,94,.15);color:var(--green)}
+.stat-icon.red{background:rgba(239,68,68,.15);color:var(--red)}
+.stat-icon.violet{background:rgba(139,92,246,.15);color:var(--violet)}
+.stat-value{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.stat-label{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ===== METHOD CARDS ===== */
+.methods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.method-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.method-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.method-card .m-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.method-card .m-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+.method-card .m-flag{font-size:24px}
+.method-card .m-country{font-size:14px;font-weight:700;margin-bottom:4px}
+.method-card .m-desc{font-size:12px;color:var(--text2);line-height:1.4;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.method-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(34,197,94,.12);color:var(--green)}
+
+/* ===== KAKEIBO ===== */
+.kakeibo-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kakeibo-cat{border-radius:var(--radius);padding:20px;text-align:center}
+.kakeibo-cat .kc-emoji{font-size:28px;margin-bottom:8px}
+.kakeibo-cat .kc-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.kakeibo-cat .kc-value{font-size:22px;font-weight:800}
+.kakeibo-cat .kc-desc{font-size:11px;color:var(--text3);margin-top:4px}
+.kc-blue{background:rgba(59,130,246,.1);color:var(--blue)}
+.kc-pink{background:rgba(236,72,153,.1);color:var(--pink)}
+.kc-violet{background:rgba(139,92,246,.1);color:var(--violet)}
+.kc-amber{background:rgba(245,158,11,.1);color:var(--amber)}
+.kc-streak{background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(234,88,12,.08));border:1px solid rgba(249,115,22,.2);border-radius:var(--radius);padding:20px;text-align:center}
+.kc-streak .flame{font-size:32px;margin-bottom:8px}
+.kc-streak .num{font-size:36px;font-weight:900;color:var(--orange)}
+.kc-streak .label{font-size:12px;color:var(--text2);margin-top:4px}
+.kc-streak .fire-text{font-size:11px;color:var(--orange);font-weight:600;margin-top:8px}
+
+/* ===== CHECKIN FORM ===== */
+.checkin{max-width:640px;margin:0 auto}
+.checkin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.checkin-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.checkin-card .hint{font-size:12px;color:var(--text3);margin-bottom:16px}
+.checkin-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.checkin-success{text-align:center;padding:48px 24px}
+.checkin-success .icon{font-size:56px;margin-bottom:16px}
+
+/* ===== LAGOM ===== */
+.lagom-burndown{border-radius:var(--radius);padding:24px;margin-bottom:24px;position:relative}
+.lagom-green{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(16,185,129,.05));border:1px solid rgba(34,197,94,.15)}
+.lagom-yellow{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(249,115,22,.05));border:1px solid rgba(245,158,11,.15)}
+.lagom-red{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(244,63,94,.05));border:1px solid rgba(239,68,68,.15)}
+.lagom-zone{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.lagom-zone .zone-label{font-size:14px;font-weight:600}
+.lagom-zone .zone-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.zone-green .zone-badge{background:rgba(34,197,94,.15);color:var(--green)}
+.zone-yellow .zone-badge{background:rgba(245,158,11,.15);color:var(--amber)}
+.zone-red .zone-badge{background:rgba(239,68,68,.15);color:var(--red)}
+.burndown-bar{height:16px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:16px}
+.burndown-fill{height:100%;border-radius:8px;transition:width .5s}
+.lagom-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.lagom-metric .lm-label{font-size:11px;color:var(--text3)}
+.lagom-metric .lm-value{font-size:20px;font-weight:800;margin-top:2px}
+
+/* ===== CARDS GLOBAIS ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{padding:20px 24px;border-bottom:1px solid var(--border)}
+.card-header h3{font-size:16px;font-weight:700}
+.card-header .card-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.card-body{padding:24px}
+
+/* ===== METHODS EXTRA ===== */
+.method-extra{border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.me-orange{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(245,158,11,.05));border:1px solid rgba(249,115,22,.15)}
+.me-red{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(244,63,94,.05));border:1px solid rgba(239,68,68,.15)}
+.me-violet{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(168,85,247,.05));border:1px solid rgba(139,92,246,.15)}
+.me-slate{background:linear-gradient(135deg,rgba(100,116,139,.08),rgba(71,85,105,.05));border:1px solid rgba(100,116,139,.15)}
+.me-green{background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(16,185,129,.05));border:1px solid rgba(34,197,94,.15)}
+.mini-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.mini-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;text-align:center}
+.mini-card .mc-val{font-size:20px;font-weight:800}
+.mini-card .mc-label{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ===== PRICING ===== */
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px}
+.pricing-card{border-radius:var(--radius);padding:32px;position:relative;overflow:hidden}
+.pricing-card.free{background:var(--card);border:1px solid var(--border)}
+.pricing-card.premium{background:linear-gradient(135deg,var(--card),rgba(34,197,94,.05));border:2px solid var(--green)}
+.pricing-badge{position:absolute;top:0;right:0;padding:6px 16px;border-radius:0 0 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.badge-free{background:var(--green);color:#fff}
+.badge-recommended{background:var(--green);color:#fff}
+.pricing-card h3{font-size:20px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.pricing-card .price{font-size:40px;font-weight:900;margin:16px 0 4px}
+.pricing-card .period{font-size:13px;color:var(--text2);margin-bottom:24px}
+.feature-list{list-style:none;margin-bottom:24px}
+.feature-list li{display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:13px;color:var(--text2)}
+.feature-list li .check{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
+.feature-list li .cross{color:var(--text3);font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* ===== TRANSACTIONS LIST ===== */
+.tx-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.tx-row:last-child{border-bottom:none}
+.tx-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tx-icon.in{background:rgba(34,197,94,.12);color:var(--green)}
+.tx-icon.out{background:rgba(239,68,68,.12);color:var(--red)}
+.tx-info{flex:1}
+.tx-info .tx-desc{font-size:13px;font-weight:500}
+.tx-info .tx-date{font-size:11px;color:var(--text3)}
+.tx-amount{font-size:14px;font-weight:700}
+.tx-amount.in{color:var(--green)}
+.tx-amount.out{color:var(--red)}
+
+/* ===== WORLD MAP ===== */
+.world-map{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px}
+.world-item{text-align:center;padding:16px;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+.world-item .wi-flag{font-size:28px;margin-bottom:6px}
+.world-item .wi-method{font-size:12px;font-weight:600}
+.world-item .wi-country{font-size:10px;color:var(--text3)}
+
+/* ===== BURNDOWN CHART ===== */
+.burndown-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.burndown-item .bi-label{font-size:12px;color:var(--text2);margin-bottom:8px}
+.burndown-item .bi-bar{height:8px;border-radius:4px;background:var(--card2);overflow:hidden}
+.burndown-item .bi-fill{height:100%;border-radius:4px}
+
+/* ===== SUB LIST ===== */
+.sub-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:8px;margin-bottom:8px;border:1px solid var(--border);background:rgba(255,255,255,.02)}
+.sub-row .sr-name{font-size:13px;font-weight:500}
+.sub-row .sr-freq{font-size:11px;color:var(--text3)}
+.sub-row .sr-val{font-size:13px;font-weight:700}
+.sub-row .sr-unused{font-size:10px;color:var(--red);display:flex;align-items:center;gap:3px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){.methods-grid,.kakeibo-cats,.stats-grid,.lagom-metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+.sidebar{display:none}
+.login{flex-direction:column}
+.login-left,.login-right{flex:none;padding:24px}
+.stats-grid,.methods-grid,.kakeibo-cats,.pricing-grid,.lagom-metrics{grid-template-columns:1fr}
+.world-map{grid-template-columns:repeat(3,1fr)}
+.burndown-compare{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== SCREEN 1: LOGIN ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 01</div>
+<div class="screen-label">Login / Cadastro</div>
+</div>
+<div class="login">
+<div class="login-left">
+<div class="content">
+<div class="flags">🇯🇵 🇸🇪 🇳🇱 🇨🇭 🇧🇷</div>
+<h1>Fincas</h1>
+<p style="color:var(--text2);margin-bottom:8px;font-size:16px;font-weight:600">Sabedoria financeira global em um só lugar</p>
+<p>8 métodos de 5 países para transformar sua relação com o dinheiro.</p>
+</div>
+</div>
+<div class="login-right">
+<div class="login-card">
+<div class="logo">Fincas</div>
+<h2>Sua jornada financeira começa aqui</h2>
+<p class="sub">Métodos comprovados de 5 países, em uma única plataforma.</p>
+<div class="login-tabs">
+<button class="active">Entrar</button>
+<button>Cadastrar</button>
+</div>
+<input class="input" type="email" placeholder="Email">
+<input class="input" type="password" placeholder="Senha">
+<button class="btn btn-green" style="margin-top:4px">Começar</button>
+<p class="login-footer">Grátis por 7 dias &bull; R$ 40/mês depois</p>
+</div>
+</div>
+</div>
+
+<div class="screen" style="margin-top:48px">
+<div class="screen-title">Screen 02</div>
+<div class="screen-label">Dashboard + Sidebar + Trial Banner</div>
+</div>
+
+<!-- ==================== SCREEN 2: DASHBOARD ==================== -->
+<div class="app">
+<div class="sidebar">
+<div class="logo">Fincas</div>
+<nav>
+<div class="nav-item active"><span class="icon">📊</span> Dashboard</div>
+<div class="nav-item"><span class="icon">💸</span> Transações</div>
+<div class="nav-section">Métodos</div>
+<div class="nav-item"><span class="icon">🌍</span> Métodos Financeiros</div>
+<div class="nav-item"><span class="icon">📖</span> Kakeibo</div>
+<div class="nav-item"><span class="icon">📉</span> Micro-Poupança</div>
+<div class="nav-item"><span class="icon">🗺️</span> Mais Métodos</div>
+<div class="nav-item"><span class="icon">💳</span> Planos <span style="margin-left:auto;font-size:10px;background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700">Trial</span></div>
+<div class="nav-section">Financeiro</div>
+<div class="nav-item"><span class="icon">🏦</span> Orçamentos</div>
+<div class="nav-item"><span class="icon">🎯</span> Metas</div>
+<div class="nav-item"><span class="icon">🤖</span> Assistente IA</div>
+<div class="nav-item"><span class="icon">⚙️</span> Configurações</div>
+</nav>
+<div class="sidebar-footer">
+<div class="user">Maria Silva</div>
+<div class="nav-item"><span class="icon">🚪</span> Sair</div>
+</div>
+</div>
+
+<div class="main">
+<!-- Trial Banner -->
+<div class="trial-banner trial-active">
+<span class="t-icon">✨</span>
+<span class="t-text"><strong>🎯 Trial grátis — 5 dias restantes</strong><br><span style="font-size:12px;color:var(--text2)">Aproveite todos os recursos durante o período de teste</span></span>
+<button class="t-btn t-btn-green">Ver planos</button>
+</div>
+
+<!-- Header -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+<div>
+<h1 style="font-size:24px;font-weight:800">Olá, Maria ☀️</h1>
+<p style="font-size:13px;color:var(--text2)">Visão geral das suas finanças</p>
+</div>
+<button class="btn btn-green" style="width:auto;padding:10px 20px;font-size:13px">📖 Check-in Kakeibo</button>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-icon blue">💰</div>
+<div><div class="stat-value">R$ 12.450</div><div class="stat-label">Saldo Atual</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon green">📈</div>
+<div><div class="stat-value" style="color:var(--green)">R$ 8.700</div><div class="stat-label">Receitas</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon red">📉</div>
+<div><div class="stat-value" style="color:var(--red)">R$ 6.250</div><div class="stat-label">Despesas</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon violet">💳</div>
+<div><div class="stat-value">47</div><div class="stat-label">Transações</div></div>
+</div>
+</div>
+
+<!-- Methods Highlight -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<h2 style="font-size:16px;font-weight:700">Métodos em destaque</h2>
+<span style="font-size:12px;color:var(--green);cursor:pointer">Ver todos →</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#f43f5e,#ec4899);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px">📖</div>
+<div><div style="font-size:12px;font-weight:600">🇯🇵 Kakeibo</div><div style="font-size:10px;color:var(--text3)">Reduz gastos 25-35%</div></div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#10b981,#14b8a6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px">📉</div>
+<div><div style="font-size:12px;font-weight:600">🇯🇵 Micro-Poupança</div><div style="font-size:10px;color:var(--text3)">Poupe sem perceber</div></div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#06b6d4);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px">🎯</div>
+<div><div style="font-size:12px;font-weight:600">🇸🇪 Lagom</div><div style="font-size:10px;color:var(--text3)">Não sobra nem falta</div></div>
+</div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#f97316,#f59e0b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px">🛡️</div>
+<div><div style="font-size:12px;font-weight:600">🇳🇱 Regra 10</div><div style="font-size:10px;color:var(--text3)">85% poupam</div></div>
+</div>
+</div>
+
+<!-- Transactions -->
+<div class="card">
+<div class="card-header" style="display:flex;justify-content:space-between;align-items:center">
+<h3>Últimas Transações</h3>
+<span style="font-size:12px;color:var(--green);cursor:pointer">Ver todas →</span>
+</div>
+<div class="card-body" style="padding:0 24px">
+<div class="tx-row"><div class="tx-icon in">↑</div><div class="tx-info"><div class="tx-desc">Salário</div><div class="tx-date">01 Jun 2026</div></div><div class="tx-amount in">+ R$ 5.200,00</div></div>
+<div class="tx-row"><div class="tx-icon out">↓</div><div class="tx-info"><div class="tx-desc">Aluguel</div><div class="tx-date">05 Jun 2026</div></div><div class="tx-amount out">- R$ 1.800,00</div></div>
+<div class="tx-row"><div class="tx-icon out">↓</div><div class="tx-info"><div class="tx-desc">Supermercado</div><div class="tx-date">08 Jun 2026</div></div><div class="tx-amount out">- R$ 623,40</div></div>
+<div class="tx-row"><div class="tx-icon out">↓</div><div class="tx-info"><div class="tx-desc">iFood</div><div class="tx-date">10 Jun 2026</div></div><div class="tx-amount out">- R$ 47,90</div></div>
+<div class="tx-row"><div class="tx-icon in">↑</div><div class="tx-info"><div class="tx-desc">Freelance</div><div class="tx-date">12 Jun 2026</div></div><div class="tx-amount in">+ R$ 800,00</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 3: HUB DE MÉTODOS ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 03</div>
+<div class="screen-label">Hub de Métodos Financeiros — 8 países</div>
+</div>
+<div class="screen" style="padding-top:0">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+<div>
+<h1 style="font-size:22px;font-weight:800">Métodos Financeiros</h1>
+<p style="font-size:13px;color:var(--text2)">Seu dinheiro merece sabedoria global — 8 métodos de 5 países</p>
+</div>
+<span style="font-size:12px;font-weight:600;color:var(--green);background:rgba(34,197,94,.1);padding:4px 12px;border-radius:20px">✨ Ativo</span>
+</div>
+
+<div class="methods-grid">
+<!-- Kakeibo -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#f43f5e,#ec4899)">📖</div>
+<div class="m-flag">🇯🇵</div>
+</div>
+<div class="m-country">Japão</div>
+<div class="m-desc">4 perguntas que transformam sua relação com o dinheiro</div>
+<div class="method-badge">Reduz gastos 25-35%</div>
+</div>
+<!-- Tsumitate -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#10b981,#14b8a6)">📉</div>
+<div class="m-flag">🇯🇵</div>
+</div>
+<div class="m-country">Japão</div>
+<div class="m-desc">Micro-poupança automática nos moldes do Tsumitate NISA</div>
+<div class="method-badge">Poupe sem perceber</div>
+</div>
+<!-- Lagom -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)">🎯</div>
+<div class="m-flag">🇸🇪</div>
+</div>
+<div class="m-country">Suécia</div>
+<div class="m-desc">Gastômetro que mede seu ritmo de gastos contra o ideal</div>
+<div class="method-badge">Não sobra nem falta</div>
+</div>
+<!-- Regra 10 -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#f97316,#f59e0b)">🛡️</div>
+<div class="m-flag">🇳🇱</div>
+</div>
+<div class="m-country">Holanda</div>
+<div class="m-desc">10% automático antes de qualquer gasto</div>
+<div class="method-badge">85% dos holandeses poupam</div>
+</div>
+<!-- Desafio Suíço -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#ef4444,#f43f5e)">🔥</div>
+<div class="m-flag">🇨🇭</div>
+</div>
+<div class="m-country">Suíça</div>
+<div class="m-desc">Mantenha o streak de pagar 100% da fatura todo mês</div>
+<div class="method-badge">Economize R$ 8.000+</div>
+</div>
+<!-- Acordo a Dois -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#8b5cf6,#a855f7)">🤝</div>
+<div class="m-flag">🇳🇱</div>
+</div>
+<div class="m-country">Holanda</div>
+<div class="m-desc">Orçamento compartilhado justo para casais</div>
+<div class="method-badge">0 brigas por dinheiro</div>
+</div>
+<!-- Limpeza -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#64748b,#475569)">✂️</div>
+<div class="m-flag">🇸🇪</div>
+</div>
+<div class="m-country">Suécia</div>
+<div class="m-desc">Auditoria de assinaturas e gastos esquecidos</div>
+<div class="method-badge">Economia R$ 2.400/ano</div>
+</div>
+<!-- Envelopes -->
+<div class="method-card">
+<div class="m-top">
+<div class="m-icon" style="background:linear-gradient(135deg,#22c55e,#84cc16)">🌍</div>
+<div class="m-flag">🇧🇷</div>
+</div>
+<div class="m-country">Brasil</div>
+<div class="m-desc">Orçamento envelope digital com Pix e Nubank-style</div>
+<div class="method-badge">Cada real tem propósito</div>
+</div>
+</div>
+
+<!-- World Map -->
+<div class="card">
+<div class="card-header"><h3>🗺️ Mapa dos Métodos</h3></div>
+<div class="card-body">
+<div class="world-map">
+<div class="world-item"><div class="wi-flag">🇯🇵</div><div class="wi-method">Kakeibo + Tsumitate</div><div class="wi-country">Japão</div></div>
+<div class="world-item"><div class="wi-flag">🇸🇪</div><div class="wi-method">Lagom + Döstädning</div><div class="wi-country">Suécia</div></div>
+<div class="world-item"><div class="wi-flag">🇳🇱</div><div class="wi-method">Regra 10 + Polder</div><div class="wi-country">Holanda</div></div>
+<div class="world-item"><div class="wi-flag">🇨🇭</div><div class="wi-method">Desafio Suíço</div><div class="wi-country">Suíça</div></div>
+<div class="world-item"><div class="wi-flag">🇧🇷</div><div class="wi-method">Caixinhas + Envelopes</div><div class="wi-country">Brasil</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 4: KAKEIBO ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 04</div>
+<div class="screen-label">Kakeibo 🇯🇵 — Check-in Semanal</div>
+</div>
+<div class="screen" style="padding-top:0">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+<div>
+<div style="display:flex;align-items:center;gap:8px"><h1 style="font-size:22px;font-weight:800">Kakeibo</h1><span style="font-size:20px">🇯🇵</span></div>
+<p style="font-size:13px;color:var(--text2)">O método japonês de 120 anos para dominar suas finanças</p>
+</div>
+<button class="btn btn-green" style="width:auto;padding:10px 20px;font-size:13px">📖 Check-in Semanal</button>
+</div>
+
+<!-- Streak + Categories -->
+<div style="display:grid;grid-template-columns:1fr 3fr;gap:16px;margin-bottom:24px">
+<div class="kc-streak">
+<div class="flame">🔥</div>
+<div class="num">5</div>
+<div class="label">semanas seguidas</div>
+<div class="fire-text">🔥 Streak ativo!</div>
+</div>
+<div class="kakeibo-cats">
+<div class="kakeibo-cat kc-blue"><div class="kc-emoji">🏠</div><div class="kc-label">Essencial</div><div class="kc-value">R$ 2.450</div><div class="kc-desc">Moradia, alim., transporte</div></div>
+<div class="kakeibo-cat kc-pink"><div class="kc-emoji">🎮</div><div class="kc-label">Desejos</div><div class="kc-value">R$ 380</div><div class="kc-desc">Lazer, restaurantes</div></div>
+<div class="kakeibo-cat kc-violet"><div class="kc-emoji">📚</div><div class="kc-label">Cultura</div><div class="kc-value">R$ 120</div><div class="kc-desc">Cursos, livros</div></div>
+<div class="kakeibo-cat kc-amber"><div class="kc-emoji">⚠️</div><div class="kc-label">Imprevistos</div><div class="kc-value">R$ 90</div><div class="kc-desc">Emergências</div></div>
+</div>
+</div>
+
+<!-- Weekly Summary -->
+<div class="card" style="margin-bottom:24px">
+<div class="card-header"><h3>📊 Resumo da Semana</h3></div>
+<div class="card-body">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:16px">
+<div>
+<div style="font-size:12px;color:var(--text3)">Receitas</div>
+<div style="font-size:24px;font-weight:800;color:var(--green)">R$ 2.100</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--text3)">Despesas</div>
+<div style="font-size:24px;font-weight:800;color:var(--red)">R$ 3.040</div>
+</div>
+<div>
+<div style="font-size:12px;color:var(--text3)">Taxa de Poupança</div>
+<div style="font-size:24px;font-weight:800;color:var(--amber)">18%</div>
+</div>
+</div>
+<div style="background:rgba(245,158,11,.08);border-radius:8px;padding:12px 16px;font-size:13px">
+<strong>⚠️ Atenção:</strong> Você está gastando mais do que o ideal. Que tal rever a categoria "Desejos"?
+</div>
+</div>
+</div>
+
+<!-- Check-in Form -->
+<div class="checkin">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+<span style="font-size:20px">📝</span>
+<h2 style="font-size:18px;font-weight:700">Check-in Semanal</h2>
+</div>
+<div class="checkin-card">
+<h3>💰 Pergunta 1: Poupança</h3>
+<div class="hint">Responda honestamente — não tem resposta errada</div>
+<div class="checkin-row">
+<div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Quanto você conseguiu poupar?</label><input class="input" placeholder="R$ 0,00"></div>
+<div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Quanto queria ter poupado?</label><input class="input" placeholder="R$ 0,00"></div>
+</div>
+</div>
+<div class="checkin-card">
+<h3>💭 Pergunta 2: Reflexão</h3>
+<div class="hint">A reflexão é o que transforma dados em hábito</div>
+<div style="margin-bottom:12px"><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">O que deu certo?</label><textarea class="input" rows="3" placeholder="Um gasto que valeu a pena..."></textarea></div>
+<div><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">O que pode melhorar?</label><textarea class="input" rows="3" placeholder="Um gasto desnecessário..."></textarea></div>
+</div>
+<button class="btn btn-green" style="margin-top:12px">✨ Concluir Check-in Semanal</button>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 5: MICRO-POUPANÇA ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 05</div>
+<div class="screen-label">Micro-Poupança 🇯🇵 — Tsumitate + Acorns</div>
+</div>
+<div class="screen" style="padding-top:0">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+<div>
+<div style="display:flex;align-items:center;gap:8px"><h1 style="font-size:22px;font-weight:800">Micro-Poupança</h1><span style="font-size:20px">🇯🇵</span></div>
+<p style="font-size:13px;color:var(--text2)">Poupe sem perceber — round-ups automáticos</p>
+</div>
+<button class="btn btn-green" style="width:auto;padding:10px 20px;font-size:13px">+ Nova Regra</button>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-icon green">🪙</div><div><div class="stat-value" style="color:var(--green)">3</div><div class="stat-label">Regras Ativas</div></div></div>
+<div class="stat-card"><div class="stat-icon blue">⬇️</div><div><div class="stat-value" style="color:var(--blue)">R$ 347</div><div class="stat-label">Acumulado (mês)</div></div></div>
+<div class="stat-card"><div class="stat-icon violet">⚡</div><div><div class="stat-value" style="color:var(--violet)">R$ 12</div><div class="stat-label">Último Round-up</div></div></div>
+<div class="stat-card"><div class="stat-icon red">🎯</div><div><div class="stat-value">62%</div><div class="stat-label">Meta mensal</div></div></div>
+</div>
+
+<!-- Rules List -->
+<div class="card">
+<div class="card-header"><h3>⚡ Suas Regras</h3></div>
+<div class="card-body" style="padding:0 24px">
+<div class="sub-row"><div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center">⚡</div><div><div class="sr-name">Arredondar Supermercado</div><div class="sr-freq">Round-up — arredondar compras</div></div></div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 127/mês</span><button class="btn btn-outline" style="width:auto;padding:6px 14px;font-size:11px">Executar</button></div></div>
+<div class="sub-row"><div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(59,130,246,.12);display:flex;align-items:center;justify-content:center">💰</div><div><div class="sr-name">Poupança Diária</div><div class="sr-freq">R$ 10 fixo — diário</div></div></div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 180/mês</span><button class="btn btn-outline" style="width:auto;padding:6px 14px;font-size:11px">Executar</button></div></div>
+<div class="sub-row"><div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center">📊</div><div><div class="sr-name">10% da Receita</div><div class="sr-freq">Percentual — mensal</div></div></div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;font-weight:700;color:var(--green)">R$ 520/mês</span><button class="btn btn-outline" style="width:auto;padding:6px 14px;font-size:11px">Executar</button></div></div>
+</div>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 6: LAGOM ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 06</div>
+<div class="screen-label">Gastômetro Lagom 🇸🇪 — Burndown Orçamentário</div>
+</div>
+<div class="screen" style="padding-top:0">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><h1 style="font-size:22px;font-weight:800">Gastômetro Lagom</h1><span style="font-size:20px">🇸🇪</span></div>
+<p style="font-size:13px;color:var(--text2);margin-bottom:24px">O equilíbrio sueco — nem demais, nem de menos</p>
+
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+<label style="font-size:13px;font-weight:500">Mês:</label>
+<input type="month" class="input" style="width:auto" value="2026-06">
+</div>
+
+<div class="lagom-burndown lagom-green zone-green">
+<div class="lagom-zone">
+<div class="zone-label">Verde — Ritmo tranquilo</div>
+<div class="zone-badge">58% utilizado • Dia 17/30</div>
+</div>
+<div class="burndown-bar"><div class="burndown-fill" style="width:58%;background:var(--green)"></div></div>
+<div class="lagom-metrics">
+<div class="lagom-metric"><div class="lm-label">Orçamento</div><div class="lm-value">R$ 5.000</div></div>
+<div class="lagom-metric"><div class="lm-label">Gasto até agora</div><div class="lm-value" style="color:var(--red)">R$ 2.900</div></div>
+<div class="lagom-metric"><div class="lm-label">Restante</div><div class="lm-value" style="color:var(--green)">R$ 2.100</div></div>
+<div class="lagom-metric"><div class="lm-label">Ritmo diário ideal</div><div class="lm-value">R$ 140/dia</div></div>
+</div>
+</div>
+
+<div class="burndown-compare">
+<div class="card">
+<div class="card-header"><h3>📉 Burndown Ideal vs Real</h3></div>
+<div class="card-body">
+<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px"><span>Ideal (linear)</span><span style="font-weight:600">R$ 2.833</span></div><div class="burndown-bar" style="height:10px"><div class="burndown-fill" style="width:57%;background:var(--blue)"></div></div></div>
+<div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px"><span>Real</span><span style="font-weight:600">R$ 2.900</span></div><div class="burndown-bar" style="height:10px"><div class="burndown-fill" style="width:58%;background:var(--green)"></div></div></div>
+<div style="margin-top:12px;font-size:12px;color:var(--green)">✅ Dentro do esperado — R$ 67 acima do ideal</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><h3>🇸🇪 O que é Lagom?</h3></div>
+<div class="card-body" style="font-size:13px;color:var(--text2);line-height:1.7">
+<strong style="color:var(--text)">Lagom</strong> (lah-gom) é o conceito sueco de "nem demais, nem de menos".
+<br><br>
+O Gastômetro compara seu gasto real com o ideal linear do mês. Se o orçamento é R$ 5.000 em 30 dias, no dia 15 o ideal seria R$ 2.500.
+<br><br>
+<strong style="color:var(--green)">🟢 Verde</strong> (&lt;85%) — Ritmo tranquilo<br>
+<strong style="color:var(--amber)">🟡 Amarelo</strong> (85-100%) — Atenção<br>
+<strong style="color:var(--red)">🔴 Vermelho</strong> (&gt;100%) — Estourou
+</div>
+</div>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 7: MAIS MÉTODOS ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 07</div>
+<div class="screen-label">Mais Métodos — Desafio Suíço, Regra 10, Limpeza</div>
+</div>
+<div class="screen" style="padding-top:0">
+
+<!-- Regra 10 -->
+<div class="method-extra me-orange">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:24px">🇳🇱</span><h3 style="font-size:18px;font-weight:800">Regra 10 — Pay Yourself First</h3></div>
+<p style="font-size:13px;color:var(--text2);margin-bottom:16px">Todo dinheiro que entra, 10% vai automaticamente para poupança <strong>antes</strong> de qualquer gasto. Os holandeses chamam isso de <em>"jezelf eerst betalen"</em>.</p>
+<div class="mini-cards">
+<div class="mini-card"><div class="mc-val" style="color:var(--orange)">10%</div><div class="mc-label">Percentual mínimo</div></div>
+<div class="mini-card"><div class="mc-val" style="color:var(--orange)">Auto</div><div class="mc-label">Sem esforço</div></div>
+<div class="mini-card"><div class="mc-val" style="color:var(--orange)">🎯</div><div class="mc-label">Aposentadoria</div></div>
+</div>
+</div>
+
+<!-- Desafio Suíço -->
+<div class="method-extra me-red" style="margin-top:16px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:24px">🇨🇭</span><h3 style="font-size:18px;font-weight:800">Desafio Suíço</h3></div>
+<p style="font-size:13px;color:var(--text2);margin-bottom:16px">Nunca pagar juros de cartão de crédito. Streak de faturas pagas 100%.</p>
+</div>
+<div style="text-align:center">
+<div style="font-size:36px">🔥</div>
+<div style="font-size:40px;font-weight:900">8</div>
+<div style="font-size:12px;color:var(--text2)">meses sem juros</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:11px;color:var(--text3)">Juros evitados</div><div style="font-size:18px;font-weight:800;color:var(--green)">R$ 8.247</div></div>
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:11px;color:var(--text3)">Próximo marco</div><div style="font-size:18px;font-weight:800">12 meses</div></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Jan ✓</div>
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Fev ✓</div>
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Mar ✓</div>
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Abr ✓</div>
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Mai ✓</div>
+<div style="padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(34,197,94,.15);color:var(--green)">Jun ✓</div>
+</div>
+</div>
+
+<!-- Limpeza -->
+<div class="method-extra me-slate" style="margin-top:16px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:24px">🇸🇪</span><h3 style="font-size:18px;font-weight:800">Limpeza Financeira — Döstädning</h3></div>
+<p style="font-size:13px;color:var(--text2);margin-bottom:16px">Auditoria de assinaturas e gastos esquecidos. Economia média de R$ 2.400/ano.</p>
+<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+<div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,.15);display:flex;align-items:center;justify-content:center;font-size:24px">⚠️</div>
+<div><div style="font-size:24px;font-weight:800">7 assinaturas</div><div style="font-size:12px;color:var(--text2)">2 podem estar esquecidas</div></div>
+</div>
+<div class="sub-row"><div class="sr-name">Netflix</div><div class="sr-val">R$ 55,90/mês</div></div>
+<div class="sub-row"><div class="sr-name">Spotify</div><div class="sr-val">R$ 21,90/mês</div></div>
+<div class="sub-row"><div class="sr-name">Academia (não vai mais)</div><div class="sr-unused">⚠️ Não usado</div><div class="sr-val" style="color:var(--red)">R$ 89,90/mês</div></div>
+</div>
+
+<!-- Envelopes -->
+<div class="method-extra me-green" style="margin-top:16px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:24px">🇧🇷</span><h3 style="font-size:18px;font-weight:800">Envelopes Pix — Caixinhas 2.0</h3></div>
+<p style="font-size:13px;color:var(--text2);margin-bottom:16px">Inspirado no YNAB e nas Caixinhas do Nubank. Cada real tem um propósito.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:11px;color:var(--text3)">Zero-sum</div><div style="font-size:13px;font-weight:600">Disponível = Receita - Alocado</div></div>
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px"><div style="font-size:11px;color:var(--text3)">Rollover</div><div style="font-size:13px;font-weight:600">Saldo vai pro mês seguinte</div></div>
+</div>
+</div>
+</div>
+
+<div class="divider" style="max-width:1440px;margin:48px auto"></div>
+
+<!-- ==================== SCREEN 8: PLANOS ==================== -->
+<div class="screen">
+<div class="screen-title">Screen 08</div>
+<div class="screen-label">Planos e Assinatura — Trial vs Premium R$40/mês</div>
+</div>
+<div class="screen" style="padding-top:0">
+<div class="trial-banner trial-active" style="margin-bottom:24px">
+<span class="t-icon">✨</span>
+<span class="t-text"><strong>🎯 Trial ativo — 5 dias restantes</strong></span>
+<button class="t-btn t-btn-green">Assinar agora</button>
+</div>
+
+<div class="pricing-grid">
+<!-- Free Trial -->
+<div class="pricing-card free">
+<div class="pricing-badge badge-free">Trial grátis</div>
+<h3>⚡ Trial de 7 Dias</h3>
+<div class="price">Grátis</div>
+<div class="period">por 7 dias</div>
+<ul class="feature-list">
+<li><span class="check">✓</span> Kakeibo — método japonês</li>
+<li><span class="check">✓</span> Micro-poupança automática</li>
+<li><span class="check">✓</span> Gastômetro Lagom</li>
+<li><span class="check">✓</span> Desafio Suíço</li>
+<li><span class="check">✓</span> Regra 10 — pay yourself first</li>
+<li><span class="check">✓</span> Limpeza Financeira</li>
+</ul>
+<button class="btn btn-outline">Já ativo</button>
+</div>
+<!-- Premium -->
+<div class="pricing-card premium">
+<div class="pricing-badge badge-recommended">Recomendado</div>
+<h3>🛡️ Fincas Premium</h3>
+<div class="price" style="color:var(--green)">R$ 40<span style="font-size:16px;font-weight:500;color:var(--text2)">/mês</span></div>
+<div class="period">Menos de R$ 1,40 por dia</div>
+<ul class="feature-list">
+<li><span class="check">✓</span> Kakeibo — método japonês</li>
+<li><span class="check">✓</span> Micro-poupança automática</li>
+<li><span class="check">✓</span> Gastômetro Lagom</li>
+<li><span class="check">✓</span> Desafio Suíço</li>
+<li><span class="check">✓</span> Regra 10 + Acordo a Dois</li>
+<li><span class="check">✓</span> Limpeza Financeira</li>
+<li><span class="check">✓</span> Envelopes Pix</li>
+<li><span class="check">✓</span> Assistente IA</li>
+<li><span class="check">✓</span> Sync bancário automático</li>
+<li><span class="check">✓</span> Múltiplos workspaces</li>
+</ul>
+<button class="btn btn-green">Assinar Agora</button>
+</div>
+</div>
+
+<!-- Por que -->
+<div class="card">
+<div class="card-header"><h3>🌍 Por que R$ 40/mês?</h3></div>
+<div class="card-body" style="font-size:13px;color:var(--text2);line-height:1.8">
+<strong style="color:var(--text)">8 métodos financeiros de 5 países</strong> — cada um com décadas (ou séculos) de comprovação prática. Não é mais um app de orçamento genérico.
+<br><br>
+<strong style="color:var(--text)">Assistente IA</strong> com suporte a OpenAI e Anthropic para análises personalizadas das suas finanças.
+<br><br>
+<strong style="color:var(--text)">Sincronização bancária automática</strong> via Pluggy — suas transações sempre atualizadas sem trabalho manual.
+<br><br>
+Menos de <strong style="color:var(--green)">R$ 1,40 por dia</strong> — o preço de um cafezinho para transformar sua saúde financeira.
+</div>
+</div>
+</div>
+
+<div style="height:80px"></div>
+
+</body>
+</html>

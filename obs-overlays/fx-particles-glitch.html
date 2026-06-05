@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Particles + Glitch Overlay</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Glitch rectangles aleatórios */
+.glitch-block {
+  position: absolute;
+  background: rgba(255,255,255,0.02);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = 1920;
+canvas.height = 1080;
+
+// ===== PIXEL PARTICLES =====
+class Pixel {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 5 + 2;
+    this.speedY = -(Math.random() * 0.8 + 0.2);
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.life = 0;
+    this.maxLife = Math.random() * 400 + 200;
+    this.opacity = Math.random() * 0.3 + 0.05;
+    this.wobble = Math.random() * 0.02;
+    this.wobbleOffset = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.x += this.speedX + Math.sin(this.life * this.wobble + this.wobbleOffset) * 0.3;
+    this.y += this.speedY;
+    this.life++;
+    if (this.life > this.maxLife || this.y < -20) {
+      this.reset();
+      this.y = canvas.height + 20;
+    }
+  }
+  draw() {
+    const fade = Math.min(this.life / 80, 1) * Math.min((this.maxLife - this.life) / 80, 1);
+    ctx.globalAlpha = this.opacity * fade;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+  }
+}
+
+const pixels = [];
+for (let i = 0; i < 120; i++) pixels.push(new Pixel());
+
+// ===== CONNECTING LINES =====
+function drawLines() {
+  for (let i = 0; i < pixels.length; i++) {
+    for (let j = i + 1; j < pixels.length; j++) {
+      const dx = pixels[i].x - pixels[j].x;
+      const dy = pixels[i].y - pixels[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 180) {
+        ctx.globalAlpha = (1 - dist / 180) * 0.08;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(pixels[i].x, pixels[i].y);
+        ctx.lineTo(pixels[j].x, pixels[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// ===== ONDA DE LUZ PERIÓDICA =====
+let wavePhase = 0;
+function drawWave() {
+  wavePhase += 0.008;
+  ctx.globalAlpha = 0.03;
+  for (let i = 0; i < 5; i++) {
+    const yBase = (Math.sin(wavePhase + i * 1.2) * 200 + 540);
+    const gradient = ctx.createRadialGradient(960, yBase, 0, 960, yBase, 400);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.03)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+// ===== GLITCH FLASHES =====
+let nextGlitch = 3000;
+function triggerGlitch() {
+  const flash = document.createElement('div');
+  flash.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255,255,255,0.015);
+    pointer-events: none; z-index: 999;
+  `;
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 80);
+
+  // Glitch bars
+  for (let i = 0; i < 3; i++) {
+    const bar = document.createElement('div');
+    const yPos = Math.random() * 1080;
+    const h = Math.random() * 15 + 2;
+    const w = Math.random() * 200 + 50;
+    bar.style.cssText = `
+      position: fixed; top: ${yPos}px; left: ${Math.random() * 300}px;
+      width: ${w}px; height: ${h}px;
+      background: rgba(255,255,255,${Math.random() * 0.04 + 0.01});
+      pointer-events: none; z-index: 998;
+    `;
+    document.body.appendChild(bar);
+    setTimeout(() => bar.remove(), 150);
+  }
+}
+
+function scheduleGlitch() {
+  const delay = Math.random() * 5000 + 3000;
+  setTimeout(() => {
+    triggerGlitch();
+    scheduleGlitch();
+  }, delay);
+}
+scheduleGlitch();
+
+// ===== ANIMATION LOOP =====
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawWave();
+  pixels.forEach(p => p.update());
+  pixels.forEach(p => p.draw());
+  drawLines();
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

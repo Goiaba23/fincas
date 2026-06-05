@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ending</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px;
+  background: #000000;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Montserrat', sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #ffffff;
+}
+
+/* Scanlines */
+.scanlines {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.008) 2px,
+    rgba(255,255,255,0.008) 4px
+  );
+  pointer-events: none;
+}
+
+/* Gradiente animado de fundo */
+.bg-gradient {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, transparent 60%);
+  animation: gradientDrift 10s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes gradientDrift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(5%, 3%); }
+  50% { transform: translate(-3%, 5%); }
+  75% { transform: translate(4%, -3%); }
+}
+
+.content {
+  text-align: center;
+  z-index: 10;
+}
+
+.main-title {
+  font-size: 80px;
+  font-weight: 100;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  animation: fadeSlide 1.5s ease;
+}
+.main-title strong {
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 5px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  margin-bottom: 50px;
+  animation: fadeSlide 1.8s ease;
+}
+
+.thanks-text {
+  font-size: 22px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 2px;
+  margin-bottom: 60px;
+  animation: fadeIn 2.5s ease;
+}
+
+.social-grid {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  animation: fadeIn 3s ease;
+}
+.social-item {
+  text-align: center;
+}
+.social-item .handle {
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.5);
+}
+.social-item .platform {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-top: 5px;
+}
+.social-item .bar {
+  width: 30px; height: 1px;
+  background: rgba(255,255,255,0.2);
+  margin: 8px auto;
+  transition: width 0.3s ease;
+}
+.social-item:hover .bar {
+  width: 50px;
+  background: #ffffff;
+}
+
+.bottom-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(to top, rgba(0,0,0,1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+@keyframes fadeSlide {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* viewer count */
+.viewer-note {
+  position: absolute;
+  bottom: 40px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.15);
+  z-index: 10;
+  animation: fadeIn 3.5s ease;
+}
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+<div class="bg-gradient"></div>
+<div class="bottom-fade"></div>
+
+<div class="content">
+  <div class="main-title"><strong>OBRIGADO</strong> POR ASSISTIR</div>
+  <div class="subtitle">Stream encerrada</div>
+  <div class="thanks-text">Você é incrível! Nos vemos na próxima.</div>
+  <div class="social-grid">
+    <div class="social-item">
+      <div class="handle">@seucanal</div>
+      <div class="bar"></div>
+      <div class="platform">Twitch</div>
+    </div>
+    <div class="social-item">
+      <div class="handle">@seucanal</div>
+      <div class="bar"></div>
+      <div class="platform">YouTube</div>
+    </div>
+    <div class="social-item">
+      <div class="handle">/discord.gg</div>
+      <div class="bar"></div>
+      <div class="platform">Discord</div>
+    </div>
+    <div class="social-item">
+      <div class="handle">@seutwitter</div>
+      <div class="bar"></div>
+      <div class="platform">Twitter / X</div>
+    </div>
+  </div>
+</div>
+
+<div class="viewer-note">Obrigado a todos que estiveram aqui hoje 💙</div>
+</body>
+</html>

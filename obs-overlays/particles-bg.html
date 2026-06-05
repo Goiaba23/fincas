@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Particles</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+}
+
+canvas {
+  display: block;
+  width: 100%; height: 100%;
+}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<script>
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = 1920;
+canvas.height = 1080;
+
+const particles = [];
+const MAX = 80;
+
+class Particle {
+  constructor() {
+    this.reset(true);
+  }
+  reset(init = false) {
+    this.x = Math.random() * canvas.width;
+    this.y = init ? Math.random() * canvas.height : canvas.height + 20;
+    this.size = Math.random() * 3 + 1;
+    this.speedY = -(Math.random() * 0.5 + 0.15);
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.4 + 0.1;
+    this.life = 0;
+    this.maxLife = Math.random() * 300 + 200;
+    this.shape = Math.random() > 0.5 ? 'circle' : 'square';
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life++;
+    if (this.life > this.maxLife || this.y < -20) {
+      this.reset();
+    }
+  }
+  draw() {
+    const alpha = this.opacity * Math.min(this.life / 60, 1) * Math.min((this.maxLife - this.life) / 60, 1);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = '#ffffff';
+    if (this.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+    }
+  }
+}
+
+for (let i = 0; i < MAX; i++) {
+  particles.push(new Particle());
+}
+
+// Linha de luz que percorre a tela
+let lightAngle = 0;
+
+function drawLightLine() {
+  lightAngle += 0.005;
+  const x = Math.sin(lightAngle) * 600 + 960;
+  const y = Math.cos(lightAngle * 0.7) * 400 + 540;
+
+  const gradient = ctx.createRadialGradient(x, y, 0, x, y, 300);
+  gradient.addColorStop(0, 'rgba(255,255,255,0.04)');
+  gradient.addColorStop(0.5, 'rgba(255,255,255,0.01)');
+  gradient.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = gradient;
+  ctx.globalAlpha = 0.6;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawLightLine();
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>

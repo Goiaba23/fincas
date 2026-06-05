@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Just Chatting</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Montserrat', sans-serif;
+  display: flex;
+  color: #ffffff;
+}
+
+/* Linhas geométricas decorativas */
+.geo-lines {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+.geo-lines::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 100px, rgba(255,255,255,0.008) 100px, rgba(255,255,255,0.008) 101px),
+    repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(255,255,255,0.008) 100px, rgba(255,255,255,0.008) 101px);
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Área da câmera (simulada) */
+.camera-area {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 500px;
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.camera-placeholder {
+  font-size: 60px;
+  font-weight: 100;
+  color: rgba(255,255,255,0.06);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: pulseText 3s ease-in-out infinite;
+}
+@keyframes pulseText {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.15; }
+}
+
+.camera-border-top, .camera-border-bottom {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+}
+.camera-border-top { top: 0; }
+.camera-border-bottom { bottom: 0; }
+.camera-border-left, .camera-border-right {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+}
+.camera-border-left { left: 0; }
+.camera-border-right { right: 0; }
+
+/* Título da conversa */
+.chat-title {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 10;
+}
+.chat-title h1 {
+  font-size: 32px;
+  font-weight: 100;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.15);
+}
+.chat-title h1 strong {
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+}
+
+/* Indicador ao vivo */
+.live-indicator {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+.live-dot {
+  width: 8px; height: 8px;
+  background: #ff3333;
+  border-radius: 50%;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.live-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Área do chat - posicionada à direita */
+.chat-area {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 380px;
+  max-height: 600px;
+  z-index: 10;
+}
+.chat-area-header {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 10px;
+}
+.chat-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.chat-msg {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.3);
+  border-left: 2px solid rgba(255,255,255,0.05);
+  animation: msgSlide 0.5s ease;
+}
+@keyframes msgSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.chat-msg strong {
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+
+/* Info inferior */
+.bottom-info {
+  position: absolute;
+  bottom: 30px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.12);
+  z-index: 10;
+}
+</style>
+</head>
+<body>
+<div class="geo-lines"></div>
+
+<div class="live-indicator">
+  <div class="live-dot"></div>
+  <div class="live-text">AO VIVO</div>
+</div>
+
+<div class="chat-title">
+  <h1><strong>JUST</strong> CHATTING</h1>
+</div>
+
+<div class="camera-area">
+  <div class="camera-border-top"></div>
+  <div class="camera-border-bottom"></div>
+  <div class="camera-border-left"></div>
+  <div class="camera-border-right"></div>
+  <div class="camera-placeholder">Sua Câmera</div>
+</div>
+
+<div class="chat-area">
+  <div class="chat-area-header">Chat da live</div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="chat-msg"><strong>JoaoGamer:</strong> eai, tudo bem?</div>
+    <div class="chat-msg"><strong>MariaStream:</strong> adoro essa cena de conversa!</div>
+    <div class="chat-msg"><strong>Pedro:</strong> como foi o dia?</div>
+  </div>
+</div>
+
+<div class="bottom-info">twitch.tv/seucanal &bull; Respondendo o chat</div>
+
+<script>
+const phrases = [
+  { user: 'Lucas', msg: 'manda um abraço aí!' },
+  { user: 'AnaJoga', msg: 'esse setup tá lindo' },
+  { user: 'GamerX', msg: 'qual seu jogo favorito?' },
+  { user: 'Carol', msg: 'acabei de chegar, oi!' },
+  { user: 'RafaelOFC', msg: 'vai ficar quanto tempo?' },
+  { user: 'JoaoGamer', msg: 'tmj sempre!' },
+];
+
+const container = document.getElementById('chatMsgs');
+let idx = 0;
+
+setInterval(() => {
+  const item = phrases[idx % phrases.length];
+  idx++;
+  const div = document.createElement('div');
+  div.className = 'chat-msg';
+  div.innerHTML = `<strong>${item.user}:</strong> ${item.msg}`;
+  container.appendChild(div);
+  while (container.children.length > 8) {
+    container.removeChild(container.firstChild);
+  }
+}, 5000);
+</script>
+</body>
+</html>
