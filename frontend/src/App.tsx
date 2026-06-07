@@ -10,6 +10,7 @@ import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";
 import Assistant from "./pages/Assistant";
 import Accounts from "./pages/Accounts";
+import ImportPage from "./pages/ImportPage";
 import FincasHub from "./pages/FincasHub";
 import FincasKakeibo from "./pages/FincasKakeibo";
 import FincasMicroSavings from "./pages/FincasMicroSavings";
@@ -114,6 +115,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Accounts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/import"
+          element={
+            <ProtectedRoute>
+              <ImportPage />
             </ProtectedRoute>
           }
         />

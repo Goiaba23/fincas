@@ -27,6 +27,7 @@ from app.api.v1.endpoints import (
     dashboard,
     fincas,
     subscriptions,
+    imports,
 )
 from app.providers.bank import pluggy
 
@@ -73,6 +74,7 @@ app.include_router(ai_simulations.router, prefix="/api/v1")
 app.include_router(fincas.router, prefix="/api/v1")
 app.include_router(dashboard.router)
 app.include_router(subscriptions.router, prefix="/api/v1")
+app.include_router(imports.router, prefix="/api/v1")
 
 pluggy.init_providers()
 

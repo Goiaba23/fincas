@@ -12,6 +12,7 @@ from app.models.rule import RuleGroup, Rule, RuleTrigger, RuleAction
 from app.models.recurring import RecurringTransaction, Bill
 from app.models.goal import Goal
 from app.models.bank import BankConnection, ImportLog
+from app.models.merchant import MerchantMapping, CsvImportLog
 from app.models.credit_card import CreditCardBill
 from app.models.ai import AIConnection, AIConversation, AIMessage, KnowledgeDocument
 from app.models.attachment import Attachment

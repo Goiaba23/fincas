@@ -16,6 +16,7 @@ import {
   Sparkles,
   Map,
   Building2,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 const mainNav = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/transactions", icon: ArrowRightLeft, label: "Transações" },
+  { to: "/import", icon: Upload, label: "Importar" },
 ];
 
 const methodNav = [
