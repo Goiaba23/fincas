@@ -15,6 +15,7 @@ import {
   CreditCard,
   Sparkles,
   Map,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const methodNav = [
 ];
 
 const financeNav = [
+  { to: "/accounts", icon: Building2, label: "Contas" },
   { to: "/budgets", icon: PiggyBank, label: "Orçamentos" },
   { to: "/goals", icon: Target, label: "Metas" },
   { to: "/planos", icon: CreditCard, label: "Planos" },
