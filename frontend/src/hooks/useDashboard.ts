@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 
 export interface DashboardData {
+  active_method: string | null;
   balance: number;
   monthly: {
     income: number;

@@ -9,7 +9,6 @@ import {
   Target,
   ArrowUpRight,
   ArrowDownRight,
-  AlertCircle,
   Sparkles,
   ChevronRight,
   Zap,
@@ -33,9 +32,9 @@ function CustomTooltip({ active, payload, label }: any) {
     <motion.div
       initial={{ opacity: 0, y: 8, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="rounded-2xl border border-[#E8E8ED] bg-white/90 px-4 py-3 shadow-xl backdrop-blur-xl"
+      className="rounded-[18px] border border-border/40 bg-card/90 px-4 py-3 shadow-xl backdrop-blur-xl"
     >
-      <p className="mb-1 text-xs font-medium text-[#86868B]">{label}</p>
+      <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} className="text-sm font-bold" style={{ color: p.color }}>
           {p.name}: {formatCurrency(p.value)}
@@ -69,7 +68,7 @@ function AnimatedCard({ children, className, delay = 0, noHover = false }: { chi
       initial="hidden"
       animate="visible"
       {...(noHover ? {} : { whileHover: { y: -3, boxShadow: "0 20px 40px rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.04)", transition: { type: "spring" as const, stiffness: 300, damping: 20 } } })}
-      className={className}
+      className={`${className}`}
     >
       {children}
     </motion.div>
@@ -81,7 +80,7 @@ function SkeletonCard({ className }: { className?: string }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`rounded-3xl skeleton-shimmer ${className || ""}`}
+      className={`rounded-[24px] skeleton-shimmer ${className || ""}`}
     />
   );
 }
@@ -97,24 +96,37 @@ export default function Dashboard() {
           <div className="mb-1 h-9 w-64 skeleton-shimmer rounded-lg" />
           <div className="h-5 w-48 skeleton-shimmer rounded-lg" />
         </div>
-        <div className="grid grid-cols-12 gap-5">
-          <SkeletonCard className="col-span-7 h-52" />
-          <SkeletonCard className="col-span-5 h-52" />
-          <SkeletonCard className="col-span-4 h-44" />
-          <SkeletonCard className="col-span-4 h-52" />
-          <SkeletonCard className="col-span-4 h-52" />
-          <SkeletonCard className="col-span-4 h-52" />
-          <SkeletonCard className="col-span-8 h-64" />
-          <SkeletonCard className="col-span-4 h-64" />
+        <div className="grid grid-cols-12 gap-3 md:gap-5">
+          <SkeletonCard className="col-span-12 md:col-span-7 h-52" />
+          <SkeletonCard className="col-span-12 md:col-span-5 h-52" />
+          <SkeletonCard className="col-span-12 sm:col-span-6 md:col-span-4 h-44" />
+          <SkeletonCard className="col-span-12 sm:col-span-6 md:col-span-4 h-52" />
+          <SkeletonCard className="col-span-12 sm:col-span-6 md:col-span-4 h-52" />
+          <SkeletonCard className="col-span-12 sm:col-span-6 md:col-span-4 h-52" />
+          <SkeletonCard className="col-span-12 md:col-span-8 h-64" />
+          <SkeletonCard className="col-span-12 sm:col-span-6 md:col-span-4 h-64" />
         </div>
       </motion.div>
     );
   }
 
-  const { balance, monthly, category_breakdown, recent_transactions, goals, budget_progress, net_worth_history } = data;
+  const { active_method, balance, monthly, category_breakdown, recent_transactions, goals, budget_progress, net_worth_history } = data;
 
   const isPositive = monthly.net >= 0;
   const savingsPct = monthly.savings_rate || 0;
+
+  const methodLabels: Record<string, { name: string; tagline: string; subtitle: string }> = {
+    kakeibo: { name: "Kakeibo", tagline: "🇯🇵 Consciência plena nos gastos", subtitle: "Seu mês dividido em 4 categorias — acompanhe cada uma" },
+    tsumitate: { name: "Tsumitate", tagline: "🇯🇵 Pouco a pouco, longe você chega", subtitle: "Foco em micro-poupança diária — cada centavo conta" },
+    regra_10: { name: "Regra 10", tagline: "🇳🇱 10% hoje, liberdade amanhã", subtitle: "10% da sua renda reservado automaticamente" },
+    lagom: { name: "Lagom", tagline: "🇸🇪 Nem muito, nem pouco — na medida certa", subtitle: "Equilíbrio entre gastar e poupar sem extremos" },
+    desafio_suico: { name: "Desafio Suíço", tagline: "🇨🇭 Disciplina trimestral", subtitle: "Poupe 10% a cada 3 meses — desafio ativo" },
+    acordo_dois: { name: "Acordo a Dois", tagline: "🇳🇱 Finanças que fortalecem relações", subtitle: "Metas compartilhadas — vocês dois no controle" },
+    limpeza_financeira: { name: "Limpeza Financeira", tagline: "🇸🇪 Menos assinatura, mais liberdade", subtitle: "Corte gastos desnecessários e otimize" },
+    envelope_pix: { name: "Envelopes Pix", tagline: "🇧🇷 Controle na palma da mão", subtitle: "Envelopes digitais — cada real tem seu lugar" },
+  };
+
+  const method = active_method ? methodLabels[active_method] : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen pb-12">
@@ -124,17 +136,32 @@ export default function Dashboard() {
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         className="mb-8"
       >
-        <p className="text-sm font-medium text-[#0D47A1]">Visão Geral</p>
-        <h1 className="text-3xl font-bold tracking-tight text-[#1A1A2E]">
+        <p className="text-sm font-medium text-accent">Visão Geral</p>
+        <h1 className="text-3xl font-bold tracking-tight text-[#1D1D1F]">
           Painel Financeiro
         </h1>
-        <p className="mt-1 text-sm text-[#86868B]">Seu resumo financeiro deste mês</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {method ? method.subtitle : "Seu resumo financeiro deste mês"}
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-12 gap-5">
+      {method && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-5 flex items-center gap-3 rounded-[20px] border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 px-5 py-3 shadow-sm backdrop-blur-xl"
+        >
+          <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+            {method.name}
+          </span>
+          <p className="text-xs text-muted-foreground">{method.tagline}</p>
+        </motion.div>
+      )}
+
+      <div className="grid grid-cols-12 gap-3 md:gap-5">
         {/* Hero Balance Card */}
-        <AnimatedCard delay={0} noHover className="col-span-7">
-          <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0D47A1] via-[#1565C0] to-[#1A237E] p-7 text-white">
+        <AnimatedCard delay={0} noHover className="col-span-12 md:col-span-7">
+          <div className="group relative overflow-hidden rounded-[24px] md:rounded-[28px] bg-gradient-to-br from-[#0D47A1] via-[#1565C0] to-[#1A237E] p-5 text-white shadow-2xl shadow-[#0D47A1]/20 md:p-7">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -158,7 +185,7 @@ export default function Dashboard() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 80 }}
-                className="mb-1 text-4xl font-bold tracking-tight"
+                className="mb-1 text-2xl font-bold tracking-tight sm:text-4xl"
               >
                 {formatCurrency(balance)}
               </motion.div>
@@ -206,10 +233,10 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Income / Expense / Savings Rate */}
-        <AnimatedCard delay={1} className="col-span-5">
-          <div className="flex h-full flex-col rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm transition-shadow">
+        <AnimatedCard delay={1} className="col-span-12 md:col-span-5">
+          <div className="flex h-full flex-col rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl transition-shadow md:p-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 Receitas vs Despesas
               </h3>
               <motion.span
@@ -225,11 +252,11 @@ export default function Dashboard() {
               <div className="flex-1 space-y-5">
                 <div>
                   <div className="mb-1.5 flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1.5 text-[#86868B]">
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
                       <TrendingUp className="h-3.5 w-3.5 text-[#22C55E]" />
                       Receitas
                     </span>
-                    <span className="font-bold text-[#1A1A2E]">{formatCurrency(monthly.income)}</span>
+                    <span className="font-bold text-[#1D1D1F]">{formatCurrency(monthly.income)}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
                     <motion.div
@@ -242,11 +269,11 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <div className="mb-1.5 flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1.5 text-[#86868B]">
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
                       <TrendingDown className="h-3.5 w-3.5 text-[#FF5A36]" />
                       Despesas
                     </span>
-                    <span className="font-bold text-[#1A1A2E]">{formatCurrency(monthly.expense)}</span>
+                    <span className="font-bold text-[#1D1D1F]">{formatCurrency(monthly.expense)}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
                     <motion.div
@@ -276,10 +303,10 @@ export default function Dashboard() {
                     endAngle={-270}
                   >
                     <RadialBar background={{ fill: "#F0F0F5" }} dataKey="value" cornerRadius={5} />
-                    <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" fill="#1A1A2E" fontSize={16} fontWeight={800}>
+                    <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle" fill="#1D1D1F" fontSize={16} fontWeight={800}>
                       {savingsPct}%
                     </text>
-                    <text x="50%" y="62%" textAnchor="middle" dominantBaseline="middle" fill="#86868B" fontSize={8} fontWeight={500}>
+                    <text x="50%" y="62%" textAnchor="middle" dominantBaseline="middle" fill="#6F6F6F" fontSize={8} fontWeight={500}>
                       poupado
                     </text>
                   </RadialBarChart>
@@ -290,10 +317,10 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Smart Savings Milestone */}
-        <AnimatedCard delay={2} noHover className="col-span-4">
+        <AnimatedCard delay={2} noHover className="col-span-12 sm:col-span-6 md:col-span-4">
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FF5A36] to-[#FF3D00] p-6 text-white shadow-sm"
+            className="relative overflow-hidden rounded-[24px] md:rounded-[28px] bg-gradient-to-br from-[#FF5A36] via-[#FF6B35] to-[#FF3D00] p-5 text-white shadow-2xl shadow-[#FF5A36]/20 md:p-6"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -336,9 +363,9 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Category Breakdown */}
-        <AnimatedCard delay={3} className="col-span-4">
-          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
-            <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+        <AnimatedCard delay={3} className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="h-full rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl md:p-6">
+            <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
               Gastos por Categoria
             </h3>
             <div className="space-y-3.5">
@@ -347,7 +374,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="py-6 text-center text-xs text-[#86868B]"
+                  className="py-6 text-center text-xs text-muted-foreground"
                 >
                   Nenhum gasto registrado este mês
                 </motion.p>
@@ -368,11 +395,11 @@ export default function Dashboard() {
                           className="h-2.5 w-2.5 rounded-full"
                           style={{ backgroundColor: COLORS[i % COLORS.length] }}
                         />
-                        <span className="font-medium text-[#1A1A2E]">{cat.category}</span>
+                        <span className="font-medium text-[#1D1D1F]">{cat.category}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#1A1A2E]">{formatCurrency(cat.amount)}</span>
-                        <span className="text-[#86868B]">{cat.percentage}%</span>
+                        <span className="font-bold text-[#1D1D1F]">{formatCurrency(cat.amount)}</span>
+                        <span className="text-muted-foreground">{cat.percentage}%</span>
                       </div>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
@@ -389,7 +416,7 @@ export default function Dashboard() {
               )}
             </div>
             {category_breakdown.length > 5 && (
-              <p className="mt-4 text-center text-[11px] text-[#86868B]">
+              <p className="mt-4 text-center text-[11px] text-muted-foreground">
                 +{category_breakdown.length - 5} outras categorias
               </p>
             )}
@@ -397,16 +424,16 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Recent Transactions */}
-        <AnimatedCard delay={4} className="col-span-4">
-          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+        <AnimatedCard delay={4} className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="h-full rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl md:p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 Transações Recentes
               </h3>
               <motion.a
                 whileHover={{ x: 2 }}
                 href="/transactions"
-                className="text-[11px] font-medium text-[#0D47A1] hover:underline"
+                className="text-[11px] font-medium text-accent hover:underline"
               >
                 Ver todas
               </motion.a>
@@ -417,7 +444,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="py-6 text-center text-xs text-[#86868B]"
+                  className="py-6 text-center text-xs text-muted-foreground"
                 >
                   Nenhuma transação ainda
                 </motion.p>
@@ -443,8 +470,8 @@ export default function Dashboard() {
                         {t.type === "deposit" ? "↑" : "↓"}
                       </motion.div>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-[#1A1A2E]">{t.description || "Sem descrição"}</p>
-                        <p className="text-[11px] text-[#86868B]">
+                        <p className="truncate text-sm font-medium text-[#1D1D1F]">{t.description || "Sem descrição"}</p>
+                        <p className="text-[11px] text-muted-foreground">
                           {t.category || "Sem categoria"}
                         </p>
                       </div>
@@ -465,10 +492,10 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Budget Progress */}
-        <AnimatedCard delay={5} className="col-span-4">
-          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+        <AnimatedCard delay={5} className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="h-full rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl md:p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 Orçamento do Mês
               </h3>
               {budget_progress.length > 0 && (
@@ -490,9 +517,9 @@ export default function Dashboard() {
                   transition={{ delay: 0.4 }}
                   className="py-6 text-center"
                 >
-                  <Target className="mx-auto mb-2 h-8 w-8 text-[#86868B]/50" />
-                  <p className="text-xs text-[#86868B]">Nenhum orçamento definido</p>
-                  <p className="mt-1 text-[11px] text-[#86868B]/60">
+                  <Target className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+                  <p className="text-xs text-muted-foreground">Nenhum orçamento definido</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground/60">
                     Crie orçamentos para acompanhar seus gastos
                   </p>
                 </motion.div>
@@ -507,18 +534,31 @@ export default function Dashboard() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 + i * 0.06, type: "spring", stiffness: 80 }}
                     >
-                      <div className="mb-1.5 flex items-center justify-between text-xs">
-                        <span className="font-medium text-[#1A1A2E]">{b.category_name}</span>
-                        <div className="flex items-center gap-1.5">
-                          {isOver && <AlertCircle className="h-3 w-3 text-[#FF5A36]" />}
-                          {isWarning && !isOver && <span className="h-2 w-2 rounded-full bg-[#FFB300]" />}
-                          <span className={isOver ? "font-bold text-[#FF5A36]" : "font-bold text-[#1A1A2E]"}>
-                            {formatCurrency(b.spent)}
-                          </span>
-                          <span className="text-[#86868B]">/ {formatCurrency(b.budgeted)}</span>
-                        </div>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
+                      <div className="flex gap-3">
+                        <div className="w-0.5 shrink-0 rounded-full bg-gradient-to-b from-[#22C55E] to-[#0D47A1]" />
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-2 flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-2">
+                              {isOver && (
+                                <span className="rounded-full bg-[#FF5A36]/10 px-2 py-0.5 text-[10px] font-semibold text-[#FF5A36]">
+                                  Excedido
+                                </span>
+                              )}
+                              {isWarning && !isOver && (
+                                <span className="rounded-full bg-[#FFB300]/10 px-2 py-0.5 text-[10px] font-semibold text-[#FFB300]">
+                                  Atenção
+                                </span>
+                              )}
+                              <span className="truncate font-medium text-[#1D1D1F]">{b.category_name}</span>
+                            </div>
+                            <div className="flex shrink-0 items-center gap-1.5">
+                              <span className={isOver ? "font-bold text-[#FF5A36]" : "font-bold text-[#1D1D1F]"}>
+                                {formatCurrency(b.spent)}
+                              </span>
+                              <span className="text-muted-foreground">/ {formatCurrency(b.budgeted)}</span>
+                            </div>
+                          </div>
+                          <div className="h-2 overflow-hidden rounded-full bg-[#F0F0F5]">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(b.progress_pct, 100)}%` }}
@@ -527,6 +567,8 @@ export default function Dashboard() {
                             isOver ? "bg-[#FF5A36]" : isWarning ? "bg-[#FFB300]" : "bg-[#22C55E]"
                           }`}
                         />
+                      </div>
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -537,13 +579,13 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Net Worth Chart */}
-        <AnimatedCard delay={6} className="col-span-8">
-          <div className="rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+        <AnimatedCard delay={6} className="col-span-12 md:col-span-8">
+          <div className="rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl md:p-6">
             <div className="mb-1 flex items-center justify-between">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 Evolução Patrimonial
               </h3>
-              <span className="text-[11px] text-[#86868B]">Últimos 6 meses</span>
+              <span className="text-[11px] text-muted-foreground">Últimos 6 meses</span>
             </div>
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -594,16 +636,16 @@ export default function Dashboard() {
         </AnimatedCard>
 
         {/* Savings Goals */}
-        <AnimatedCard delay={7} className="col-span-4">
-          <div className="h-full rounded-3xl border border-[#E8E8ED] bg-white p-6 shadow-sm">
+        <AnimatedCard delay={7} className="col-span-12 sm:col-span-6 md:col-span-4">
+          <div className="h-full rounded-[24px] md:rounded-[28px] border border-white/20 bg-white/60 p-5 shadow-lg shadow-black/5 backdrop-blur-2xl md:p-6">
             <div className="mb-5 flex items-center justify-between">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#86868B]">
+              <h3 className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 Metas de Economia
               </h3>
               <motion.a
                 whileHover={{ x: 2 }}
                 href="/fincas/micro-savings"
-                className="text-[11px] font-medium text-[#0D47A1] hover:underline"
+                className="text-[11px] font-medium text-accent hover:underline"
               >
                 Gerenciar
               </motion.a>
@@ -615,9 +657,9 @@ export default function Dashboard() {
                 transition={{ delay: 0.4 }}
                 className="py-6 text-center"
               >
-                <PiggyBank className="mx-auto mb-2 h-8 w-8 text-[#86868B]/50" />
-                <p className="text-xs text-[#86868B]">Nenhuma meta definida</p>
-                <p className="mt-1 text-[11px] text-[#86868B]/60">
+                <PiggyBank className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+                <p className="text-xs text-muted-foreground">Nenhuma meta definida</p>
+                <p className="mt-1 text-[11px] text-muted-foreground/60">
                   Defina metas para acompanhar seu progresso
                 </p>
               </motion.div>
@@ -641,11 +683,11 @@ export default function Dashboard() {
                           >
                             {isComplete ? "✓" : "₿"}
                           </motion.div>
-                          <span className="text-sm font-medium text-[#1A1A2E]">{goal.name}</span>
+                          <span className="text-sm font-medium text-[#1D1D1F]">{goal.name}</span>
                         </div>
                         <div className="text-right">
-                          <span className="font-bold text-[#1A1A2E]">{formatCurrency(goal.current_amount)}</span>
-                          <span className="text-[#86868B]"> / {formatCurrency(goal.target_amount)}</span>
+                          <span className="font-bold text-[#1D1D1F]">{formatCurrency(goal.current_amount)}</span>
+                          <span className="text-muted-foreground"> / {formatCurrency(goal.target_amount)}</span>
                         </div>
                       </div>
                       <div className="relative h-2.5 overflow-hidden rounded-full bg-[#F0F0F5]">
@@ -656,9 +698,18 @@ export default function Dashboard() {
                           className={`h-full rounded-full ${gradClass}`}
                         />
                       </div>
-                      <p className="mt-1 text-[11px] text-[#86868B]">
-                        {isComplete ? "Concluída! 🎉" : `${goal.progress_pct}% concluída`}
-                      </p>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        {isComplete ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#22C55E]/10 px-2.5 py-0.5 text-[10px] font-semibold text-[#22C55E]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E]" />
+                            Concluída
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-[#0D47A1]/10 px-2.5 py-0.5 text-[10px] font-semibold text-[#0D47A1]">
+                            {goal.progress_pct}% concluída
+                          </span>
+                        )}
+                      </div>
                     </motion.div>
                   );
                 })}

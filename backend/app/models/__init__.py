@@ -1,6 +1,6 @@
 from app.models.base import *
 from app.models.user import User
-from app.models.workspace import Workspace, WorkspaceMember
+from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMethod
 from app.models.account import Account
 from app.models.currency import Currency, ExchangeRate
 from app.models.transaction import TransactionJournal, Transaction

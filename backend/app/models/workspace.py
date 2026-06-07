@@ -31,3 +31,12 @@ class WorkspaceMember(Base, TimestampMixin):
 
     workspace = sa.orm.relationship("Workspace", back_populates="members")
     user = sa.orm.relationship("User", foreign_keys=[user_id])
+
+
+class WorkspaceMethod(Base, TimestampMixin):
+    __tablename__ = "workspace_methods"
+
+    workspace_id: Mapped[str] = mapped_column(sa.Uuid, sa.ForeignKey("workspaces.id"), primary_key=True)
+    method: Mapped[str] = mapped_column(sa.String(50), primary_key=True)
+    is_enabled: Mapped[bool] = mapped_column(sa.Boolean, default=True)
+    config: Mapped[dict] = mapped_column(sa.JSON, default={})

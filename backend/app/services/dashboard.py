@@ -9,6 +9,7 @@ from app.models.transaction import TransactionJournal
 from app.models.category import Category, CategoryGroup
 from app.models.goal import Goal
 from app.models.budget import Budget, BudgetLimit
+from app.models.workspace import WorkspaceMethod
 
 
 class DashboardService:
@@ -254,9 +255,21 @@ class DashboardService:
 
         return points
 
+    async def get_active_method(self) -> str | None:
+        result = await self.db.execute(
+            select(WorkspaceMethod.method)
+            .where(WorkspaceMethod.workspace_id == self.workspace_id)
+            .where(WorkspaceMethod.is_enabled == True)
+            .order_by(WorkspaceMethod.created_at.desc())
+            .limit(1)
+        )
+        row = result.scalar_one_or_none()
+        return row
+
     async def get_full_dashboard(self) -> dict:
         balance = await self.get_balance()
         monthly = await self.get_monthly_summary()
+        active_method = await self.get_active_method()
         categories = await self.get_category_breakdown()
         transactions = await self.get_recent_transactions()
         goals = await self.get_goals()
@@ -265,6 +278,7 @@ class DashboardService:
         sparkline = await self.get_balance_sparkline()
 
         return {
+            "active_method": active_method,
             "balance": balance,
             "monthly": monthly,
             "category_breakdown": categories,
